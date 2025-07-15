@@ -268,3 +268,48 @@ html {
 #how-it-works .section-title {
   color: orange;
 }
+@media (max-width: 500px) {
+  .navbar {
+    flex-direction: column;
+    padding: 10px 6px;
+  }
+  .navbar-left {
+    font-size: 16px;
+  }
+  .navbar-left img {
+    height: 28px;
+    margin-right: 6px;
+  }
+  .navbar-right a, .navbar-right .register {
+    font-size: 13px;
+    margin-left: 6px;
+    padding: 8px 10px;
+  }
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 2vw;
+  }
+  .hero-left h1 {
+    font-size: 28px;
+  }
+  .hero-left p {
+    font-size: 15px;
+  }
+  .hero-right {
+    width: 100%;
+    padding: 16px 4vw;
+    margin-top: 18px;
+  }
+  .section-title {
+    font-size: 22px;
+  }
+  .how-steps, .features-cards {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .how-step, .feature-card {
+    max-width: 100vw;
+    padding: 16px 6px;
+  }
+}

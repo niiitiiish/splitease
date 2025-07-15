@@ -147,3 +147,41 @@ body {
   font-size: 16px;
   box-shadow: 0 2px 8px rgba(130,103,229,0.08);
 }
+
+@media (max-width: 500px) {
+  .register-container {
+    padding: 0 2vw;
+  }
+  .register-form {
+    padding: 24px 8px 18px 8px;
+    max-width: 98vw;
+    border-radius: 16px;
+  }
+  .register-form h2 {
+    font-size: 1.3rem;
+    margin-bottom: 18px;
+  }
+  .register-form .avatar-icon {
+    font-size: 28px;
+    width: 40px;
+    height: 40px;
+  }
+  .form-group {
+    margin-bottom: 14px;
+  }
+  .register-form input {
+    font-size: 14px;
+    padding: 10px 8px 6px 8px;
+    border-radius: 8px;
+  }
+  .register-form button {
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+  .register-message {
+    font-size: 13px;
+    padding: 8px 0;
+    border-radius: 6px;
+  }
+}
