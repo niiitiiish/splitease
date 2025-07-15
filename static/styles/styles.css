@@ -1,0 +1,248 @@
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+header {
+    background: linear-gradient(to right, #3f87a6, #ebf8e1, #f69d3c);
+    color: #fff;
+    text-align: center;
+    padding: 2rem;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+nav h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero p {
+    font-size: 1.2rem;
+}
+
+.hero button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border: none;
+    background-color: #333;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.features {
+    padding: 3rem 2rem;
+    background-color: white;
+    text-align: center;
+}
+
+.feature-boxes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.feature {
+    background: #f9fafc;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 1.5rem;
+    width: 250px;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    background-color: #ddd;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-top: 40px;
+}
+
+p {
+    color: #555;
+    text-align: center;
+}
+
+/* Premium Glassmorphism Login Card */
+/* 3D Glassy Login Background Inspired by Example, SplitEase Theme */
+.login-container, .register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(120deg, #8267e5 0%, #6f4ed4 100%);
+    position: relative;
+    overflow: hidden;
+}
+/* Floating 3D Spheres */
+.login-container::before, .login-container::after,
+.register-container::before, .register-container::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(16px);
+    opacity: 0.45;
+    z-index: 0;
+}
+.login-container::before, .register-container::before {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle at 30% 30%, #b39ddb 0%, #8267e5 100%);
+    top: -80px;
+    left: -100px;
+}
+.login-container::after, .register-container::after {
+    width: 220px;
+    height: 220px;
+    background: radial-gradient(circle at 70% 70%, #fff 0%, #b39ddb 100%);
+    bottom: -60px;
+    right: -60px;
+}
+.login-form, .register-form {
+    background: rgba(255,255,255,0.85);
+    border-radius: 22px;
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 2px 8px rgba(44, 62, 80, 0.13);
+    padding: 48px 36px 36px 36px;
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: box-shadow 0.2s, transform 0.2s;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    border: 1.5px solid #e3e8ee;
+    backdrop-filter: blur(8px);
+    z-index: 1;
+}
+.login-form:hover, .register-form:hover {
+    box-shadow: 0 16px 48px rgba(44, 62, 80, 0.22), 0 4px 16px rgba(44, 62, 80, 0.15);
+    transform: translateY(-2px) scale(1.018);
+    border-color: #b6c6e3;
+}
+.login-form .avatar, .register-form .avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 84px;
+    height: 84px;
+    background: linear-gradient(135deg, #5b3cc4 0%, #25d366 100%);
+    border-radius: 50%;
+    margin: 0 auto 22px auto;
+    box-shadow: 0 2px 12px rgba(44, 62, 80, 0.13);
+    border: 3px solid #fff;
+}
+.login-form .avatar-icon, .register-form .avatar-icon {
+    font-size: 2.7em;
+    color: #fff;
+    filter: drop-shadow(0 2px 4px rgba(44,62,80,0.10));
+}
+.login-form h2, .register-form h2 {
+    font-size: 2.1em;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: #5b3cc4;
+    letter-spacing: 0.5px;
+}
+.login-form .form-group, .register-form .form-group {
+    position: relative;
+    width: 100%;
+    margin-bottom: 26px;
+}
+.login-form input, .register-form input {
+    width: 100%;
+    padding: 15px 16px;
+    border: 1.5px solid #e3e8ee;
+    border-radius: 9px;
+    font-size: 1.08em;
+    background: rgba(248,250,252,0.95);
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+    margin-bottom: 2px;
+}
+.login-form input:focus, .register-form input:focus {
+    border-color: #5b3cc4;
+    box-shadow: 0 2px 8px rgba(91, 60, 196, 0.10);
+}
+.login-form label, .register-form label {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    color: #888;
+    font-size: 1em;
+    pointer-events: none;
+    transition: 0.2s;
+}
+.login-form input:focus + label,
+.login-form input:not(:placeholder-shown) + label,
+.register-form input:focus + label,
+.register-form input:not(:placeholder-shown) + label {
+    top: -10px;
+    left: 12px;
+    font-size: 0.87em;
+    color: #5b3cc4;
+    background: #fff;
+    padding: 0 6px;
+}
+.login-form button, .register-form button {
+    width: 100%;
+    background: linear-gradient(90deg, #25d366 0%, #5b3cc4 100%);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: 14px 0;
+    font-size: 1.13em;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    box-shadow: 0 1px 6px rgba(44, 62, 80, 0.10);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.login-form button:hover, .register-form button:hover {
+    background: linear-gradient(90deg, #5b3cc4 0%, #25d366 100%);
+    box-shadow: 0 2px 12px rgba(44, 62, 80, 0.16);
+}
+@media (max-width: 600px) {
+    .login-form, .register-form {
+        padding: 18px 4vw 12px 4vw;
+        max-width: 98vw;
+    }
+    .login-container, .register-container {
+        padding: 0 0 40px 0;
+    }
+}

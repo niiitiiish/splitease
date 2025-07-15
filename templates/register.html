@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register | Spiltease</title>
+  <link rel="icon" href="/static/splitease.png" type="image/png">
+  <link rel="stylesheet" href="/static/styles/styles.css">
+  <link rel="stylesheet" href="/static/styles/landing.css">
+  <link rel="stylesheet" href="/static/styles/register.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="/static/splitease.png" alt="Spiltease Icon">
+      Spiltease
+    </div>
+    <div class="navbar-right">
+      <a href="/">Home</a>
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="/login">Login</a>
+      <a href="/register" class="register">Register</a>
+    </div>
+  </div>
+
+  <div class="hero" style="min-height: 80vh; align-items: flex-start;">
+    <div class="hero-left" style="max-width: 500px;">
+      <h1>Join <span>Spiltease</span></h1>
+      <p>Create your account and start splitting expenses with friends, roommates, and groups effortlessly.</p>
+    </div>
+    <div class="hero-right" style="margin-top: 0; width: 360px;">
+      
+      <form class="register-form" method="post" action="/register">
+        <div class="avatar">
+          <div class="avatar-icon">👤</div>
+        </div>
+        <h2 style="color: #5b3cc4; text-align: center; margin-bottom: 24px;">Register</h2>
+        <div class="form-group">
+          <input type="text" id="username" name="username" required placeholder=" ">
+          <label for="username">Username</label>
+        </div>
+        <div class="form-group">
+          <input type="password" id="password" name="password" required placeholder=" ">
+          <label for="password">Password</label>
+        </div>
+        <button type="submit">Register</button>
+        <p style="text-align: center; color: #555;">Already have an account? <a href="/login" class="dashboard-btn" style="margin-left:8px;">Login</a></p>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

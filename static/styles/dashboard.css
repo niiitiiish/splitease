@@ -1,0 +1,597 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #4f80ff 0%, #9f48ff 100%);
+    color: #fff;
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 80px;
+    background: rgba(20, 30, 60, 0.7);
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 0;
+    border-radius: 30px;
+    margin: 20px 0 20px 20px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    gap: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.sidebar li {
+    margin: 30px 0;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    transition: background 0.2s, color 0.2s;
+    border-radius: 16px;
+    width: 48px;
+    height: 48px;
+}
+
+.sidebar li:hover {
+    background: rgba(255,255,255,0.1);
+    color: #ffd700;
+}
+
+.sidebar li a, .sidebar li a i {
+    color: #fff !important;
+    transition: color 0.2s;
+}
+.sidebar li a:hover, .sidebar li a:focus, .sidebar li a:active {
+    color: #ffd700 !important;
+}
+
+.main {
+    flex-grow: 1;
+    padding: 60px 40px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: bold;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+}
+
+.cards {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1 1 220px;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 30px 40px;
+    border-radius: 20px;
+    font-size: 20px;
+    backdrop-filter: blur(18px);
+    box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 200px;
+    margin-bottom: 10px;
+}
+
+.card span {
+    display: block;
+    font-size: 36px;
+    font-weight: bold;
+    margin-top: 10px;
+    letter-spacing: 1px;
+}
+
+.groups h2,
+.expenses h2 {
+    margin: 30px 0 10px;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.group, .expense {
+    background: rgba(255, 255, 255, 0.18);
+    padding: 18px 24px;
+    border-radius: 18px;
+    margin-bottom: 18px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.group:hover, .expense:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+.expense {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    font-size: 18px;
+    position: relative;
+}
+
+.expense > span:last-child {
+    position: absolute;
+    right: 24px;
+    top: 18px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 48px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(130,103,229,0.08);
+}
+.navbar-left {
+  display: flex;
+  align-items: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #5b3cc4;
+}
+.navbar-left img {
+  height: 48px;
+  margin-right: 14px;
+  border-radius: 10px;
+}
+.navbar-right a {
+  margin-left: 28px;
+  text-decoration: none;
+  color: #5b3cc4;
+  font-weight: 500;
+  font-size: 18px;
+  transition: color 0.2s;
+}
+.navbar-right a:hover {
+  color: #ffdd55;
+}
+
+/* --- GROUPS PAGE --- */
+.groups-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+}
+.groups-list li {
+    background: rgba(255,255,255,0.18);
+    margin-bottom: 16px;
+    padding: 16px 24px;
+    border-radius: 16px;
+    font-size: 20px;
+    color: #5b3cc4;
+    font-weight: 500;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+}
+.groups-list li:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+/* Group invite and delete forms side by side */
+.groups-list li {
+    background: rgba(255,255,255,0.18);
+    margin-bottom: 16px;
+    padding: 16px 24px;
+    border-radius: 16px;
+    font-size: 20px;
+    color: #5b3cc4;
+    font-weight: 500;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.invite-form, .delete-group-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+.invite-form input[type="text"] {
+    flex: 1;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    background: rgba(255,255,255,0.7);
+    color: #5b3cc4;
+}
+.invite-form button, .delete-group-form button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.invite-form button {
+    background: #4f80ff;
+    color: #fff;
+}
+.invite-form button:hover {
+    background: #9f48ff;
+    color: #fff;
+}
+.delete-group-form .delete-btn {
+    background: #ff4d4f;
+    color: #fff;
+}
+.delete-group-form .delete-btn:hover {
+    background: #b71c1c;
+    color: #fff;
+}
+
+/* --- FORMS (Groups & Add Expense) --- */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    background: rgba(255,255,255,0.13);
+    padding: 28px 24px;
+    border-radius: 18px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    max-width: 400px;
+    margin-top: 30px;
+}
+form input, form select {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: none;
+    font-size: 18px;
+    background: rgba(255,255,255,0.7);
+    color: #5b3cc4;
+    outline: none;
+    margin-bottom: 8px;
+}
+form button {
+    padding: 12px 0;
+    border-radius: 10px;
+    border: none;
+    background: #5b3cc4;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+form button:hover {
+    background: #ffdd55;
+    color: #5b3cc4;
+}
+
+/* Premium Group Card Styles */
+.group-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.10), 0 1.5px 4px rgba(44, 62, 80, 0.08);
+    padding: 24px 26px 18px 26px;
+    min-width: 260px;
+    max-width: 340px;
+    flex: 1 1 260px;
+    margin-bottom: 18px;
+    transition: box-shadow 0.2s, transform 0.2s;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    border: 1.5px solid #e3e8ee;
+    position: relative;
+}
+.group-card:hover {
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 2px 8px rgba(44, 62, 80, 0.10);
+    transform: translateY(-2px) scale(1.015);
+    border-color: #b6c6e3;
+}
+.group-card .group-members ul {
+    margin: 8px 0 0 0;
+    padding: 0 0 0 16px;
+    color: #3a3a3a;
+    font-size: 1em;
+}
+.group-card .group-expenses ul {
+    margin: 8px 0 0 0;
+    padding: 0 0 0 16px;
+    color: #4a4a4a;
+    font-size: 0.98em;
+}
+.group-card button,
+.group-card form button {
+    background: linear-gradient(90deg, #25d366 0%, #128c7e 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 1em;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(44, 62, 80, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.group-card button:hover,
+.group-card form button:hover {
+    background: linear-gradient(90deg, #128c7e 0%, #25d366 100%);
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.13);
+}
+.group-card .group-members b,
+.group-card .group-expenses b {
+    color: #075e54;
+    font-weight: 600;
+}
+.group-card .group-members li,
+.group-card .group-expenses li {
+    margin-bottom: 2px;
+}
+.group-card .invite-form input,
+.group-card .invite-form datalist,
+.group-card .invite-form button {
+    margin-top: 4px;
+}
+.group-card .delete-btn {
+    background: linear-gradient(90deg, #f44336 0%, #e57373 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 1em;
+    font-weight: 500;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(44, 62, 80, 0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.group-card .delete-btn:hover {
+    background: linear-gradient(90deg, #e57373 0%, #f44336 100%);
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.13);
+}
+.group-card a {
+    font-size: 1.25em;
+    font-weight: bold;
+    color: #075e54;
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    margin-left: 6px;
+}
+.group-card .group-members ul,
+.group-card .group-expenses ul {
+    list-style: disc inside;
+}
+
+.expenses-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.expense-bubble {
+    background: #dcf8c6;
+    border-radius: 18px;
+    padding: 10px 16px;
+    max-width: 350px;
+    align-self: flex-end;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.expense-bubble .desc {
+    font-size: 1em;
+    font-weight: bold;
+    color: #075e54;
+}
+.expense-bubble .amt {
+    font-size: 0.95em;
+    color: #333;
+}
+.expense-bubble .grp {
+    font-size: 0.85em;
+    color: #888;
+}
+
+/* Expense Card Styles (Paytm-like) */
+.expense-card {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(44, 62, 80, 0.13), 0 1.5px 4px rgba(44, 62, 80, 0.08);
+    padding: 22px 28px 18px 28px;
+    min-width: 260px;
+    max-width: 370px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+    border: 1.5px solid #e3e8ee;
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+}
+.expense-card:hover {
+    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 2px 8px rgba(44, 62, 80, 0.10);
+    transform: translateY(-2px) scale(1.012);
+    border-color: #b6c6e3;
+}
+.expense-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.13em;
+    font-weight: 600;
+    color: #5b3cc4;
+    margin-bottom: 8px;
+}
+.expense-payer i, .expense-group i, .expense-reason i {
+    margin-right: 6px;
+    color: #25d366;
+}
+.expense-amount {
+    color: #25d366;
+    font-size: 1.18em;
+    font-weight: 700;
+}
+.expense-body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 1em;
+    color: #444;
+}
+.expense-group, .expense-reason {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+/* Button and Icon Improvements */
+.group-card button, .group-card form button, .group-card .delete-btn {
+    font-size: 1.08em;
+    padding: 7px 18px;
+    border-radius: 8px;
+    margin-top: 8px;
+    margin-bottom: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.group-card button[aria-label], .group-card .delete-btn[aria-label] {
+    position: relative;
+}
+.group-card button[aria-label]:hover::after, .group-card .delete-btn[aria-label]:hover::after {
+    content: attr(aria-label);
+    position: absolute;
+    left: 50%;
+    top: -32px;
+    transform: translateX(-50%);
+    background: #333;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.95em;
+    white-space: nowrap;
+    z-index: 10;
+    opacity: 0.95;
+}
+.group-card .invite-form input, .group-card .invite-form datalist {
+    font-size: 1em;
+    padding: 7px 10px;
+    border-radius: 7px;
+    margin-right: 6px;
+}
+
+.notification-wrapper {
+    position: relative;
+    display: inline-block;
+}
+.notif-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #f44336;
+    color: #fff;
+    border-radius: 50%;
+    padding: 2px 7px;
+    font-size: 0.85em;
+    font-weight: bold;
+    box-shadow: 0 1px 4px rgba(44,62,80,0.13);
+    z-index: 10;
+}
+.notif-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 36px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(44,62,80,0.13);
+    min-width: 260px;
+    z-index: 100;
+    max-height: 320px;
+    overflow-y: auto;
+    border: 1px solid #e3e8ee;
+}
+.notification-wrapper:focus-within .notif-dropdown {
+    display: block;
+}
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+    }
+    .sidebar {
+        flex-direction: row;
+        width: 100vw;
+        height: 70px;
+        margin: 0;
+        border-radius: 0 0 30px 30px;
+        padding: 0 10px;
+        gap: 0;
+    }
+    .sidebar ul {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        justify-content: space-around;
+    }
+    .sidebar li {
+        margin: 0 10px;
+    }
+    .main {
+        padding: 30px 10px;
+    }
+    .cards {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .expense-card {
+        min-width: 90vw;
+        max-width: 98vw;
+        padding: 16px 8vw 12px 8vw;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 28px;
+    }
+    .card {
+        padding: 18px 12px;
+        font-size: 16px;
+    }
+    .card span {
+        font-size: 24px;
+    }
+    .group, .expense {
+        padding: 12px 10px;
+        font-size: 16px;
+    }
+}

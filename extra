@@ -1,0 +1,21 @@
+graph TD
+    A[User] -->|POST /register| B[FastAPI App]
+    A -->|POST /login| B
+    B -->|uses| C[models.py]
+    B -->|uses| D[schemas.py]
+    B -->|uses| E[database.py]
+    B -->|renders| F[templates/index.html]
+    B -->|serves| G[static/]
+
+
+
+
+
+
+    user will login and go to their respectove dasboard and there they will see the feature of creating group
+    or the invitation from friends to join the gropup ...
+    user can create group and invite their friends using user id ;
+    and then the friend will get a invite link to join the group;
+
+
+    in a group the creator or the friend can list can add amount to split the then the amount will be splitted among each equally,and every will se how much they have to pay

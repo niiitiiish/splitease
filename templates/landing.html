@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SplitEase - Split Expenses Made Simple</title>
+  <link rel="icon" href="/static/splitease.png" type="image/png">
+  <link rel="stylesheet" href="/static/styles/styles.css">
+  <link rel="stylesheet" href="/static/styles/landing.css">
+</head>
+<body>
+  <div class="navbar">
+    <div class="navbar-left">
+      <img src="/static/splitease.png" alt="Spiltease Icon">
+      Spiltease
+    </div>
+    <div class="navbar-right">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="/login" class="dashboard-btn">Login</a>
+      <button class="register" onclick="window.location.href='/register'">Register</button>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-left">
+      <h1>Split Expenses <span>Made Simple</span></h1>
+      <p>Stop the awkward money conversations. Spiltease makes sharing expenses with friends, roommates, and groups effortless and fair.</p>
+      <div class="cta-btns">
+        <button class="start-btn">Start Splitting Free</button>
+        <button class="watch-btn">Watch Demo</button>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <h3>Weekend Trip</h3>
+      <p>4 people • $480 total</p>
+      <div class="person green">
+        <div class="icon">A</div>
+        <div>Alex</div>
+        <div>+60</div>
+      </div>
+      <div class="person red">
+        <div class="icon">S</div>
+        <div>Sarah</div>
+        <div>-$20</div>
+      </div>
+      <div class="person red">
+        <div class="icon">M</div>
+        <div>Mike</div>
+        <div>-$20</div>
+      </div>
+      <div class="person red">
+        <div class="icon">J</div>
+        <div>Jess</div>
+        <div>-$20</div>
+      </div>
+      <button class="settle-btn">Settle Up</button>
+    </div>
+  </div>
+
+  <!-- How It Works Section -->
+  <section id="how-it-works">
+    <div style="max-width: 1100px; margin: 0 auto; text-align: center;">
+      <h2 class="section-title">How It Works</h2>
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-icon">📝</div>
+          <h3>1. Create a Group</h3>
+          <p>Start by creating a group for your trip, event, or household. Invite friends to join in seconds.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">🎯</div>
+          <h3>2. Add Expenses</h3>
+          <p>Log shared expenses as they happen. Everyone can see who paid for what and how much they owe.</p>
+        </div>
+        <div class="how-step">
+          <div class="how-icon">✅</div>
+          <h3>3. Settle Up</h3>
+          <p>See who owes what, and settle up with a tap. No more awkward reminders or confusion!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features">
+    <div class="features-container">
+      <h2 class="section-title">Why Choose Spiltease?</h2>
+      <p class="section-subtitle">We've thought of everything to make expense sharing painless and transparent</p>
+      <div class="features-cards">
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>Lightning Fast</h3>
+          <p>Add expenses in seconds. Our smart categorization learns your spending patterns.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Smart Splitting</h3>
+          <p>Equal splits, custom amounts, percentages, or by shares - we handle any scenario.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📱</div>
+          <h3>Works Everywhere</h3>
+          <p>Web, iOS, Android - sync seamlessly across all your devices.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

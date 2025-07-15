@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <img src="/static/splitease.png" alt="Spiltease Icon">
+            Spiltease
+        </div>
+        <div class="navbar-right">
+            <a href="/logout"><i class="fas fa-power-off"></i></a>
+        </div>
+    </div>
+    <div class="container">
+        <nav class="sidebar">
+            <ul>
+                <li><a href="/dashboard"><i class="fas fa-home"></i></a></li>
+            </ul>
+        </nav>
+        <main class="main">
+            <h1>Welcome, {{ username }}!</h1>
+            {% if msg %}
+            <div style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px 20px; border-radius: 5px; margin-bottom: 15px;">
+                {{ msg }}
+            </div>
+            {% endif %}
+            <!-- Invitations Section -->
+          
+            <div class="cards">
+                <div class="card">
+                    Total Owed
+                    <span>₹{{ total_owed }}</span>
+                </div>
+                <div class="card">
+                    Total Lent
+                    <span>₹{{ total_lent }}</span>
+                </div>
+            </div>
+            <div class="groups">
+                <h2>My Groups</h2>
+                <div class="groups-list" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                    {% for group in groups %}
+                    <div class="group-card" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.07); padding: 18px 20px; min-width: 260px; max-width: 320px; flex: 1 1 260px; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #e0e0e0; display: flex; align-items: center; justify-content: center; font-size: 1.5em; font-weight: bold; color: #555;">
+                                {{ group.name[0]|upper }}
+                            </div>
+                            <a href="#" style="font-size: 1.2em; font-weight: bold; color: #075e54; text-decoration: none;">{{ group.name }}</a>
+                        </div>
+                        <div id="members-{{ group.id }}" class="group-members" style="margin-bottom: 10px; display:none;">
+                            <b style="font-size: 0.95em; color: #555;">Members:</b>
+                            <ul style="margin: 6px 0 0 0; padding: 0 0 0 12px; color: #333; font-size: 1em;">
+                                {% for member in group.members %}
+                                <li>{{ member.username }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <!-- Group Expenses List -->
+                        <div class="group-expenses" style="margin-bottom: 10px;">
+                            <b style="font-size: 0.95em; color: #555;">Expenses:</b>
+                            <ul style="margin: 6px 0 0 0; padding: 0 0 0 12px; color: #333; font-size: 0.97em;">
+                                {% for expense in group.expenses %}
+                                <li>
+                                    <b>{{ expense.payer.username }}</b> paid ₹{{ expense.amount }} for "{{ expense.description }}"
+                                </li>
+                                {% else %}
+                                <li style="color:#aaa;">No expenses yet.</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <button type="button" onclick="toggleMembers('members-{{ group.id }}')" aria-label="Show Members" title="Show Members" style="margin-left:auto; background:#25d366; color:#fff; border:none; border-radius:5px; padding:4px 10px; cursor:pointer; display:inline-flex; align-items:center;"><i class="fas fa-users"></i></button>
+                        <!-- Add Expense Button and Form for Each Group -->
+                        <button type="button" onclick="toggleExpenseForm('expense-form-{{ group.id }}')" aria-label="Add Expense" title="Add Expense" style="background:#075e54; color:#fff; border:none; border-radius:5px; padding:4px 10px; margin-bottom:8px; cursor:pointer; display:inline-flex; align-items:center;"><i class="fas fa-plus-circle"></i> Add Expense</button>
+                        <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" style="display:none; margin-bottom:10px;">
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <input type="text" name="description" placeholder="Reason for expense" required>
+                            <input type="number" name="amount" placeholder="Amount" required>
+                            <button type="submit" aria-label="Submit Expense" title="Submit Expense"><i class="fas fa-check"></i> Add</button>
+                        </form>
+                        <form method="post" action="/dashboard/invite-user" class="invite-form" style="display:inline-flex; align-items:center; gap:6px;">
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <input list="usernames-{{ group.id }}" name="username" placeholder="Invite by username" required>
+                            <datalist id="usernames-{{ group.id }}">
+                                {% for user in all_users %}
+                                    {% if user.username not in group.members|map(attribute='username') %}
+                                        <option value="{{ user.username }}">{{ user.username }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </datalist>
+                            <button type="submit" aria-label="Invite User" title="Invite User"><i class="fas fa-user-plus"></i></button>
+                        </form>
+                        <form method="post" action="/dashboard/delete-group" class="delete-group-form" style="display:inline-flex; align-items:center;">
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <button type="submit" class="delete-btn" aria-label="Delete Group" title="Delete Group" onclick="return confirm('Are you sure you want to delete this group?');"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+                <form method="post" action="/dashboard/add-group" style="margin-top: 10px;">
+                    <input type="text" name="group_name" placeholder="New group name" required>
+                    <button type="submit">Add Group</button>
+                </form>
+            </div>
+            <div class="expenses">
+                <h2 style="text-align:center;">Recent Expenses</h2>
+                <div class="expenses-list" style="display: flex; flex-direction: column; align-items: center; gap: 18px;">
+                {% for expense in expenses %}
+                    <div class="expense-card" title="Expense by {{ expense.payer.username }}" aria-label="Expense Card">
+                        <div class="expense-header">
+                            <span class="expense-payer"><i class="fas fa-user"></i> {{ expense.payer.username }}</span>
+                            <span class="expense-amount">₹{{ expense.amount }}</span>
+                        </div>
+                        <div class="expense-body">
+                            <span class="expense-group"><i class="fas fa-users"></i> {{ expense.group.name }}</span>
+                            <span class="expense-reason"><i class="fas fa-comment-dots"></i> {{ expense.description }}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+                </div>
+            </div>
+            <script>
+            function toggleMembers(id) {
+                var el = document.getElementById(id);
+                if (el.style.display === 'none') {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+            function toggleExpenseForm(id) {
+                var el = document.getElementById(id);
+                if (el.style.display === 'none') {
+                    el.style.display = 'block';
+                } else {
+                    el.style.display = 'none';
+                }
+            }
+            </script>
+            <!-- Notification Bell Script -->
+            <script>
+            function toggleDropdown() {
+                var dropdown = document.getElementById('notification-dropdown');
+                if (dropdown.style.display === 'block') {
+                    dropdown.style.display = 'none';
+                } else {
+                    dropdown.style.display = 'block';
+                }
+            }
+            window.onclick = function(event) {
+                if (!event.target.closest('.notification-bell')) {
+                    var dropdown = document.getElementById('notification-dropdown');
+                    if (dropdown) dropdown.style.display = 'none';
+                }
+            }
+            </script>
+            <!-- End Notification Bell Script -->
+</body>
+</html>

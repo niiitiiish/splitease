@@ -1,0 +1,149 @@
+body {
+  background: linear-gradient(120deg, #8267e5 0%, #6f4ed4 100%);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.register-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.register-form {
+  background: rgba(255,255,255,0.85);
+  padding: 56px 40px 40px 40px;
+  border-radius: 28px;
+  box-shadow: 0 12px 40px 0 rgba(130,103,229,0.22), 0 2px 8px rgba(130,103,229,0.10);
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border: 2.5px solid rgba(130,103,229,0.12);
+  backdrop-filter: blur(8px);
+  transition: box-shadow 0.2s, border 0.2s;
+}
+
+.register-form:hover, .register-form:focus-within {
+  box-shadow: 0 20px 60px 0 rgba(130,103,229,0.28), 0 4px 16px rgba(130,103,229,0.14);
+  border: 2.5px solid #8267e5;
+}
+
+.register-form .avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.register-form .avatar-icon {
+  background: linear-gradient(120deg, #8267e5 0%, #ffdd55 100%);
+  color: #fff;
+  font-size: 40px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(130,103,229,0.18);
+  border: 2.5px solid #fff;
+}
+
+.register-form h2 {
+  color: #5b3cc4;
+  margin-bottom: 32px;
+  text-align: center;
+  font-size: 2.3rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 28px;
+}
+
+.register-form label {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  color: #888;
+  font-size: 1rem;
+  pointer-events: none;
+  transition: 0.2s;
+  background: transparent;
+}
+
+.register-form input {
+  width: 100%;
+  padding: 18px 16px 10px 16px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 17px;
+  background: rgba(255,255,255,0.7);
+  transition: border 0.2s, box-shadow 0.2s;
+  outline: none;
+  margin-bottom: 0;
+}
+
+.register-form input:focus {
+  border: 1.5px solid #8267e5;
+  box-shadow: 0 0 0 2px #e6e0fa;
+}
+
+.register-form input:focus + label,
+.register-form input:not(:placeholder-shown) + label {
+  top: -12px;
+  left: 12px;
+  font-size: 0.92rem;
+  color: #5b3cc4;
+  background: #fff;
+  padding: 0 4px;
+  border-radius: 4px;
+}
+
+.register-form button {
+  background: linear-gradient(90deg, #8267e5 0%, #ffdd55 100%);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 18px;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+  box-shadow: 0 2px 8px rgba(130,103,229,0.10);
+  letter-spacing: 0.5px;
+}
+
+.register-form button:hover {
+  background: linear-gradient(90deg, #ffdd55 0%, #8267e5 100%);
+  color: #5b3cc4;
+  box-shadow: 0 6px 24px rgba(130,103,229,0.18);
+}
+
+.register-form p {
+  text-align: center;
+  color: #555;
+}
+
+.register-form a {
+  color: #5b3cc4;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register-message {
+  background: #e6f7ff;
+  color: #5b3cc4;
+  padding: 12px 0;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  font-weight: 500;
+  font-size: 16px;
+  box-shadow: 0 2px 8px rgba(130,103,229,0.08);
+}
