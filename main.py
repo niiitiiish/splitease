@@ -11,6 +11,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, text
 import traceback
+import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -238,3 +239,8 @@ async def global_exception_handler(request: Request, exc: Exception):
     print("Unhandled error:", exc)
     traceback.print_exc()
     return PlainTextResponse(str(exc), status_code=500)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)
