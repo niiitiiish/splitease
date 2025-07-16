@@ -1,23 +1,16 @@
-from fastapi import FastAPI, Depends, HTTPException, Request, Form, status
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, PlainTextResponse
+from fastapi import FastAPI, Depends, Request, Form, status
+from fastapi.responses import HTMLResponse, RedirectResponse, PlainTextResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy.orm import Session
-import schemas
 from database import SessionLocal, engine, Base
 import models
 from starlette.middleware.sessions import SessionMiddleware
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, DateTime
-from sqlalchemy.orm import relationship
-from sqlalchemy import create_engine, text
-import traceback
-import os
-from datetime import datetime
 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
-app.add_middleware(SessionMiddleware, secret_key="your-secret-key")  # Use a strong secret key!
+app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -243,6 +236,9 @@ async def delete_group_dashboard(request: Request, db: Session = Depends(get_db)
     group_id = int(form.get("group_id"))
     group = db.query(models.Group).filter(models.Group.id == group_id).first()
     if group and user in group.members:
+        # Delete related settlements first
+        db.query(models.Settlement).filter(models.Settlement.group_id == group.id).delete()
+        db.commit()
         db.delete(group)
         db.commit()
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
