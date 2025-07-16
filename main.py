@@ -97,6 +97,9 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
     try:
         groups = user.groups if user.groups else []
         group_ids = [g.id for g in groups]
+        # Attach latest expenses to each group
+        for group in groups:
+            group.expenses = db.query(models.Expense).filter(models.Expense.group_id == group.id).order_by(models.Expense.id.desc()).limit(3).all()
         expenses = db.query(models.Expense).filter(models.Expense.paid_by == user.id, models.Expense.group_id.in_(group_ids)).order_by(models.Expense.id.desc()).limit(10).all() if group_ids else []
         invitations = db.query(models.Invitation).filter(models.Invitation.email == user.username, models.Invitation.accepted == False).all()
         total_owed = 0.0
