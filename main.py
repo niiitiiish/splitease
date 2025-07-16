@@ -147,6 +147,13 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
                         temp_balances[creditor.username] -= pay_amount
                         amount_to_pay -= pay_amount
             group.owes = owes
+            # Update total_owed and total_lent for the current user
+            if user.username in balances:
+                if balances[user.username] < 0:
+                    total_owed += -balances[user.username]
+                elif balances[user.username] > 0:
+                    total_lent += balances[user.username]
+
         all_users = db.query(models.User).all()
     except Exception as e:
         return templates.TemplateResponse("dashboard.html", {
