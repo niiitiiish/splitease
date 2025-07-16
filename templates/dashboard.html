@@ -24,6 +24,13 @@
         </nav>
         <main class="main">
             <h1>Welcome, {{ username }}!</h1>
+            <div class="upi-section" style="margin-bottom: 20px;">
+                <form method="post" action="/update-upi" style="display: flex; align-items: center; gap: 10px;">
+                    <label for="upi_id"><b>Your UPI ID:</b></label>
+                    <input type="text" id="upi_id" name="upi_id" value="{{ all_users|selectattr('username', 'equalto', username)|first.upi_id if all_users else '' }}" placeholder="your-upi@bank" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
+                    <button type="submit" style="padding: 6px 16px; border-radius: 6px; background: #5b3cc4; color: #fff; border: none;">Update</button>
+                </form>
+            </div>
             {% if msg %}
             <div style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px 20px; border-radius: 5px; margin-bottom: 15px;">
                 {{ msg }}
@@ -80,6 +87,16 @@
                         </div>
                         <div class="group-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
                             <button class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
+                            {% for member in group.members %}
+                                {% set bal = balances[member.username] %}
+                                {% if bal < 0 and member.username == username %}
+                                    {% set payer = group.expenses|selectattr('paid_by', 'equalto', expense.paid_by)|first if group.expenses else None %}
+                                    {% set receiver = group.members|selectattr('id', 'equalto', expense.paid_by)|first if group.expenses else None %}
+                                    {% if group.expenses and receiver and receiver.upi_id %}
+                                        <a href="upi://pay?pa={{ receiver.upi_id }}&pn={{ receiver.username }}&am={{ -bal|round(2) }}&tn=SplitEase+Payment" target="_blank" style="margin: 6px 0; color: #128c7e; font-weight: bold; text-decoration: underline;">Pay {{ receiver.username }} via UPI</a>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
                             <button onclick="toggleExpenseForm('expense-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-plus-circle"></i> Add Expense</button>
                             <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" style="display:none; margin-top:8px;" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                                 <input type="hidden" name="group_id" value="{{ group.id }}">

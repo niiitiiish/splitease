@@ -253,6 +253,18 @@ async def accept_invite_dashboard(request: Request, db: Session = Depends(get_db
         db.commit()
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
 
+@app.post("/update-upi")
+async def update_upi(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    if not user:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+    form = await request.form()
+    upi_id = form.get("upi_id")
+    if upi_id:
+        user.upi_id = upi_id
+        db.commit()
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
     print("Unhandled error:", exc)

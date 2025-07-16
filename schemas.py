@@ -4,6 +4,10 @@ from typing import List
 class UserCreate(BaseModel):
     username: str
     password: str
+    upi_id: str = None
+
+class UserUpdateUPI(BaseModel):
+    upi_id: str
 
 class GroupCreate(BaseModel):
     name: str

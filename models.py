@@ -15,6 +15,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(50), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
+    upi_id = Column(String(100), nullable=True)  # New field for UPI ID
 
     groups = relationship("Group", secondary=user_group, back_populates="members")
 
