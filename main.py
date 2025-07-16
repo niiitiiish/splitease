@@ -11,6 +11,7 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, text
 import traceback
+import os
 
 Base.metadata.create_all(bind=engine)
 
@@ -94,17 +95,28 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
     if not user:
         return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
     try:
-        # Only show groups where the user is a member
         groups = user.groups if user.groups else []
         group_ids = [g.id for g in groups]
         expenses = db.query(models.Expense).filter(models.Expense.paid_by == user.id, models.Expense.group_id.in_(group_ids)).order_by(models.Expense.id.desc()).limit(10).all() if group_ids else []
         invitations = db.query(models.Invitation).filter(models.Invitation.email == user.username, models.Invitation.accepted == False).all()
         total_owed = 0.0
         total_lent = 0.0
+        group_balances = {}
         for group in groups:
             members = group.members if group.members else []
             member_count = len(members)
             group_expenses = db.query(models.Expense).filter(models.Expense.group_id == group.id).all()
+            # Calculate per-member balances
+            balances = {member.username: 0.0 for member in members}
+            for expense in group_expenses:
+                share = expense.amount / member_count if member_count > 0 else 0
+                for member in members:
+                    if member.id == expense.paid_by:
+                        balances[member.username] += expense.amount - share
+                    else:
+                        balances[member.username] -= share
+            group_balances[group.id] = balances
+            # For dashboard totals
             for expense in group_expenses:
                 share = expense.amount / member_count if member_count > 0 else 0
                 if expense.paid_by == user.id:
@@ -122,6 +134,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
             "expenses": [],
             "invitations": [],
             "all_users": [],
+            "group_balances": {},
             "msg": f"Internal error: {str(e)}"
         })
     return templates.TemplateResponse("dashboard.html", {
@@ -133,6 +146,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
         "expenses": expenses,
         "invitations": invitations,
         "all_users": all_users,
+        "group_balances": group_balances,
         "msg": msg
     })
 
@@ -238,3 +252,8 @@ async def global_exception_handler(request: Request, exc: Exception):
     print("Unhandled error:", exc)
     traceback.print_exc()
     return PlainTextResponse(str(exc), status_code=500)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=port)

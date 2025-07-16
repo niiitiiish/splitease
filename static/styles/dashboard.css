@@ -294,24 +294,99 @@ form button:hover {
 }
 
 /* Premium Group Card Styles */
+/* --- Group Card Redesign for Modern Look --- */
 .group-card {
-    background: linear-gradient(135deg, #f8fafc 0%, #e0e7ef 100%);
-    border-radius: 18px;
-    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.10), 0 1.5px 4px rgba(44, 62, 80, 0.08);
-    padding: 24px 26px 18px 26px;
-    min-width: 260px;
-    max-width: 340px;
-    flex: 1 1 260px;
-    margin-bottom: 18px;
+    background: linear-gradient(135deg, #a084ee 0%, #e0e7ef 100%);
+    border-radius: 22px;
+    box-shadow: 0 6px 32px rgba(120,80,200,0.13), 0 2px 8px rgba(44, 62, 80, 0.10);
+    padding: 28px 28px 20px 28px;
+    min-width: 320px;
+    max-width: 370px;
+    flex: 1 1 320px;
+    margin-bottom: 22px;
     transition: box-shadow 0.2s, transform 0.2s;
     font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-    border: 1.5px solid #e3e8ee;
+    border: none;
     position: relative;
 }
 .group-card:hover {
-    box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18), 0 2px 8px rgba(44, 62, 80, 0.10);
-    transform: translateY(-2px) scale(1.015);
-    border-color: #b6c6e3;
+    box-shadow: 0 12px 36px rgba(120,80,200,0.18), 0 4px 12px rgba(44, 62, 80, 0.13);
+    transform: translateY(-3px) scale(1.018);
+}
+.group-card .group-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #5b3cc4;
+    margin-bottom: 2px;
+}
+.group-card .group-meta {
+    color: #444;
+    font-size: 1.08em;
+    margin-bottom: 18px;
+    font-weight: 500;
+}
+.group-card .member-row {
+    display: flex;
+    align-items: center;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    padding: 8px 14px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgba(44,62,80,0.06);
+}
+.group-card .member-row.positive {
+    background: #eaffea;
+}
+.group-card .member-row.negative {
+    background: #ffeaea;
+}
+.group-card .member-initial {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #4ee24e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #fff;
+    font-size: 1.1em;
+    margin-right: 12px;
+}
+.group-card .member-row.negative .member-initial {
+    background: #ffb3b3;
+}
+.group-card .member-name {
+    flex: 1;
+    font-size: 1.08em;
+    color: #222;
+}
+.group-card .member-balance {
+    font-weight: bold;
+    font-size: 1.08em;
+}
+.group-card .member-balance.positive {
+    color: #1ca01c;
+}
+.group-card .member-balance.negative {
+    color: #e23c3c;
+}
+.group-card .settle-btn {
+    width: 100%;
+    margin-top: 14px;
+    background: #222;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 0;
+    font-weight: bold;
+    font-size: 1.12em;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.10);
+    transition: background 0.18s;
+}
+.group-card .settle-btn:hover {
+    background: #5b3cc4;
 }
 .group-card .group-members ul {
     margin: 8px 0 0 0;
