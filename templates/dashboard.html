@@ -68,7 +68,7 @@
                         <div class="group-expenses" style="margin-top: 12px;">
                             <b>Recent Expenses</b>
                             <ul style="list-style: none; padding: 0; margin: 0;">
-                            {% for expense in group.expenses|slice(0,3) %}
+                            {% for expense in group.expenses[:3] %}
                                 <li style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 1em;">
                                     <span><i class="fas fa-comment-dots"></i> {{ expense.description }}</span>
                                     <span style="font-weight: bold; color: #5b3cc4;"><i class="fas fa-rupee-sign"></i> {{ expense.amount }}</span>
