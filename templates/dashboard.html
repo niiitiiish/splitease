@@ -43,28 +43,35 @@
             </div>
             <div class="groups">
                 <h2>My Groups</h2>
-                <div class="groups-list" style="display: flex; flex-wrap: wrap; gap: 20px;">
+                <div class="groups-list">
                     {% for group in groups %}
-                    <div class="group-card" style="background: #fff; border-radius: 18px; box-shadow: 0 2px 8px rgba(120,80,200,0.10); padding: 24px 24px 18px 24px; min-width: 320px; max-width: 350px; flex: 1 1 320px; margin-bottom: 18px;">
-                        <div style="font-size: 1.4em; font-weight: bold; color: #5b3cc4; margin-bottom: 2px;">{{ group.name }}</div>
-                        <div style="color: #555; font-size: 1.08em; margin-bottom: 16px;">{{ group.members|length }} people • ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }} total</div>
-                        <div>
+                    <div class="group-card">
+                        <div class="group-title">
+                            <i class="fas fa-users"></i> {{ group.name }}
+                        </div>
+                        <div class="group-meta">
+                            <i class="fas fa-user-friends"></i> {{ group.members|length }} people &bull; <i class="fas fa-rupee-sign"></i> ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }} total
+                        </div>
+                        <div class="group-members">
+                            <b>Members</b>
+                            <ul>
                             {% set balances = group_balances[group.id] %}
                             {% for member in group.members %}
-                            <div style="display: flex; align-items: center; border-radius: 10px; margin-bottom: 7px; padding: 7px 12px; background: {% if balances[member.username] > 0 %}#eaffea{% else %}#ffeaea{% endif %};">
-                                <div style="width: 32px; height: 32px; border-radius: 50%; background: {% if balances[member.username] > 0 %}#4ee24e{% else %}#ffb3b3{% endif %}; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.1em; margin-right: 12px;">{{ member.username[0]|upper }}</div>
-                                <div style="flex:1; font-size: 1.08em; color: #222;">{{ member.username }}</div>
-                                <div style="font-weight: bold; font-size: 1.08em; color: {% if balances[member.username] > 0 %}#1ca01c{% else %}#e23c3c{% endif %};">{% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}</div>
-                            </div>
+                                <li class="member-row {% if balances[member.username] > 0 %}positive{% else %}negative{% endif %}">
+                                    <span class="member-initial">{{ member.username[0]|upper }}</span>
+                                    <span class="member-name">{{ member.username }}</span>
+                                    <span class="member-balance {% if balances[member.username] > 0 %}positive{% else %}negative{% endif %}">{% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}</span>
+                                </li>
                             {% endfor %}
+                            </ul>
                         </div>
-                        <button style="width: 100%; margin-top: 12px; background: #222; color: #fff; border: none; border-radius: 7px; padding: 10px 0; font-weight: bold; font-size: 1.08em; cursor: pointer;">Settle Up</button>
+                        <button class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
                     </div>
                     {% endfor %}
                 </div>
-                <form method="post" action="/dashboard/add-group" style="margin-top: 10px;">
+                <form method="post" action="/dashboard/add-group" class="add-group-form">
                     <input type="text" name="group_name" placeholder="New group name" required>
-                    <button type="submit">Add Group</button>
+                    <button type="submit"><i class="fas fa-plus"></i> Add Group</button>
                 </form>
             </div>
             <div class="expenses">
