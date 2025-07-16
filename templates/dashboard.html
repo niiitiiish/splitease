@@ -86,16 +86,14 @@
                             {% endfor %}
                             </ul>
                         </div>
+                        {% set latest_expense = group.expenses[0] if group.expenses else None %}
+                        {% set receiver = group.members|selectattr('id', 'equalto', latest_expense.paid_by)|first if latest_expense else None %}
                         <div class="group-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
                             <button class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
                             {% for member in group.members %}
                                 {% set bal = balances[member.username] %}
-                                {% if bal < 0 and member.username == username %}
-                                    {% set payer = group.expenses|selectattr('paid_by', 'equalto', expense.paid_by)|first if group.expenses else None %}
-                                    {% set receiver = group.members|selectattr('id', 'equalto', expense.paid_by)|first if group.expenses else None %}
-                                    {% if group.expenses and receiver and receiver.upi_id %}
-                                        <a href="upi://pay?pa={{ receiver.upi_id }}&pn={{ receiver.username }}&am={{ -bal|round(2) }}&tn=SplitEase+Payment" target="_blank" style="margin: 6px 0; color: #128c7e; font-weight: bold; text-decoration: underline;">Pay {{ receiver.username }} via UPI</a>
-                                    {% endif %}
+                                {% if bal < 0 and member.username == username and receiver and receiver.upi_id %}
+                                    <a href="upi://pay?pa={{ receiver.upi_id }}&pn={{ receiver.username }}&am={{ -bal|round(2) }}&tn=SplitEase+Payment" target="_blank" style="margin: 6px 0; color: #128c7e; font-weight: bold; text-decoration: underline;">Pay {{ receiver.username }} via UPI</a>
                                 {% endif %}
                             {% endfor %}
                             <button onclick="toggleExpenseForm('expense-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-plus-circle"></i> Add Expense</button>
