@@ -86,6 +86,19 @@
                             {% endfor %}
                             </ul>
                         </div>
+                        <div class="group-settlements" style="margin-top: 12px;">
+                            <b>Settlement History</b>
+                            <ul style="list-style: none; padding: 0; margin: 0;">
+                            {% for settlement in group.settlements[:5] %}
+                                <li style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 0.98em;">
+                                    <span><i class="fas fa-user"></i> {{ all_users|selectattr('id', 'equalto', settlement.payer_id)|first.username if all_users else '' }} paid <i class="fas fa-user"></i> {{ all_users|selectattr('id', 'equalto', settlement.receiver_id)|first.username if all_users else '' }}</span>
+                                    <span style="font-weight: bold; color: #1ca01c;"><i class="fas fa-rupee-sign"></i> {{ settlement.amount }}</span>
+                                </li>
+                            {% else %}
+                                <li style="color: #aaa; font-size: 0.98em;">No settlements yet.</li>
+                            {% endfor %}
+                            </ul>
+                        </div>
                         {% set latest_expense = group.expenses[0] if group.expenses else None %}
                         {% set receiver = group.members|selectattr('id', 'equalto', latest_expense.paid_by)|first if latest_expense else None %}
                         <div class="group-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">

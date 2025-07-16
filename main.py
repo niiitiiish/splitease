@@ -98,9 +98,10 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
     try:
         groups = user.groups if user.groups else []
         group_ids = [g.id for g in groups]
-        # Attach latest expenses to each group
+        # Attach latest expenses and settlements to each group
         for group in groups:
             group.expenses = db.query(models.Expense).filter(models.Expense.group_id == group.id).order_by(models.Expense.id.desc()).limit(3).all()
+            group.settlements = db.query(models.Settlement).filter(models.Settlement.group_id == group.id).order_by(models.Settlement.timestamp.desc()).all()
         expenses = db.query(models.Expense).filter(models.Expense.paid_by == user.id, models.Expense.group_id.in_(group_ids)).order_by(models.Expense.id.desc()).limit(10).all() if group_ids else []
         invitations = db.query(models.Invitation).filter(models.Invitation.email == user.username, models.Invitation.accepted == False).all()
         total_owed = 0.0
@@ -110,6 +111,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
             members = group.members if group.members else []
             member_count = len(members)
             group_expenses = db.query(models.Expense).filter(models.Expense.group_id == group.id).all()
+            group_settlements = db.query(models.Settlement).filter(models.Settlement.group_id == group.id).all()
             # Calculate per-member balances
             balances = {member.username: 0.0 for member in members}
             if member_count == 0:
@@ -122,6 +124,13 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
                         balances[member.username] += expense.amount - share
                     else:
                         balances[member.username] -= share
+            # Subtract settlements
+            for settlement in group_settlements:
+                payer = db.query(models.User).filter(models.User.id == settlement.payer_id).first()
+                receiver = db.query(models.User).filter(models.User.id == settlement.receiver_id).first()
+                if payer and receiver:
+                    balances[payer.username] += settlement.amount
+                    balances[receiver.username] -= settlement.amount
             group_balances[group.id] = balances
             # For dashboard totals
             for expense in group_expenses:
