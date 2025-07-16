@@ -111,8 +111,11 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
             group_expenses = db.query(models.Expense).filter(models.Expense.group_id == group.id).all()
             # Calculate per-member balances
             balances = {member.username: 0.0 for member in members}
+            if member_count == 0:
+                group_balances[group.id] = balances
+                continue  # Skip division for empty groups
             for expense in group_expenses:
-                share = expense.amount / member_count if member_count > 0 else 0
+                share = expense.amount / member_count
                 for member in members:
                     if member.id == expense.paid_by:
                         balances[member.username] += expense.amount - share
