@@ -89,7 +89,12 @@
                         {% set latest_expense = group.expenses[0] if group.expenses else None %}
                         {% set receiver = group.members|selectattr('id', 'equalto', latest_expense.paid_by)|first if latest_expense else None %}
                         <div class="group-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-                            <button class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
+                            <form method="post" action="/dashboard/settle-up">
+                                <input type="hidden" name="group_id" value="{{ group.id }}">
+                                <input type="hidden" name="receiver_id" value="{{ receiver.id }}">
+                                <input type="hidden" name="amount" value="{{ -bal|round(2) }}">
+                                <button type="submit" class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
+                            </form>
                             {% for member in group.members %}
                                 {% set bal = balances[member.username] %}
                                 {% if bal < 0 and member.username == username and receiver and receiver.upi_id %}

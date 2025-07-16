@@ -1,6 +1,7 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, Table, Float, Boolean, DateTime
 from sqlalchemy.orm import relationship
 from database import Base
+from datetime import datetime
 
 # Association table for many-to-many (users <-> groups)
 user_group = Table(
@@ -46,3 +47,12 @@ class Invitation(Base):
     accepted = Column(Boolean, default=False)
 
     group = relationship("Group", backref="invitations")
+
+class Settlement(Base):
+    __tablename__ = "settlements"
+    id = Column(Integer, primary_key=True)
+    group_id = Column(Integer, ForeignKey("groups.id"))
+    payer_id = Column(Integer, ForeignKey("users.id"))
+    receiver_id = Column(Integer, ForeignKey("users.id"))
+    amount = Column(Float)
+    timestamp = Column(DateTime, default=datetime.utcnow)

@@ -7,11 +7,12 @@ import schemas
 from database import SessionLocal, engine, Base
 import models
 from starlette.middleware.sessions import SessionMiddleware
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine, text
 import traceback
 import os
+from datetime import datetime
 
 Base.metadata.create_all(bind=engine)
 
@@ -263,6 +264,26 @@ async def update_upi(request: Request, db: Session = Depends(get_db)):
     if upi_id:
         user.upi_id = upi_id
         db.commit()
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+
+@app.post("/dashboard/settle-up")
+async def settle_up(request: Request, db: Session = Depends(get_db)):
+    user = get_current_user(request, db)
+    if not user:
+        return RedirectResponse(url="/login", status_code=status.HTTP_302_FOUND)
+    form = await request.form()
+    group_id = int(form.get("group_id"))
+    receiver_id = int(form.get("receiver_id"))
+    amount = float(form.get("amount"))
+    from models import Settlement
+    settlement = Settlement(
+        group_id=group_id,
+        payer_id=user.id,
+        receiver_id=receiver_id,
+        amount=amount
+    )
+    db.add(settlement)
+    db.commit()
     return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
 
 @app.exception_handler(Exception)
