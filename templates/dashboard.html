@@ -43,7 +43,7 @@
             </div>
             <div class="groups">
                 <h2>My Groups</h2>
-                <div class="groups-list">
+                <div class="groups-list" style="display: flex; flex-wrap: nowrap; gap: 24px; overflow-x: auto; padding-bottom: 12px;">
                     {% for group in groups %}
                     <div class="group-card">
                         <div class="group-title">
@@ -66,10 +66,23 @@
                             </ul>
                         </div>
                         <button class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
+                        <button onclick="toggleExpenseForm('expense-form-{{ group.id }}')" class="group-action-btn" style="margin-top:10px;"><i class="fas fa-plus-circle"></i> Add Expense</button>
+                        <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" style="display:none; margin-top:8px;" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <input type="text" name="description" placeholder="Reason" required style="margin-bottom:6px;">
+                            <input type="number" name="amount" placeholder="Amount" step="0.01" min="0" required style="margin-bottom:6px;">
+                            <button type="submit"><i class="fas fa-check"></i> Add</button>
+                        </form>
+                        <button onclick="toggleInviteForm('invite-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-user-plus"></i> Invite Friend</button>
+                        <form id="invite-form-{{ group.id }}" method="post" action="/dashboard/invite-user" style="display:none; margin-top:8px;" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                            <input type="text" name="username" placeholder="Friend's username" required style="margin-bottom:6px;">
+                            <button type="submit"><i class="fas fa-paper-plane"></i> Invite</button>
+                        </form>
                     </div>
                     {% endfor %}
                 </div>
-                <form method="post" action="/dashboard/add-group" class="add-group-form">
+                <form method="post" action="/dashboard/add-group" class="add-group-form" style="margin-top: 10px;">
                     <input type="text" name="group_name" placeholder="New group name" required>
                     <button type="submit"><i class="fas fa-plus"></i> Add Group</button>
                 </form>
@@ -92,17 +105,17 @@
                 </div>
             </div>
             <script>
-            function toggleMembers(id) {
+            function toggleExpenseForm(id) {
                 var el = document.getElementById(id);
-                if (el.style.display === 'none') {
+                if (el.style.display === 'none' || el.style.display === '') {
                     el.style.display = 'block';
                 } else {
                     el.style.display = 'none';
                 }
             }
-            function toggleExpenseForm(id) {
+            function toggleInviteForm(id) {
                 var el = document.getElementById(id);
-                if (el.style.display === 'none') {
+                if (el.style.display === 'none' || el.style.display === '') {
                     el.style.display = 'block';
                 } else {
                     el.style.display = 'none';
