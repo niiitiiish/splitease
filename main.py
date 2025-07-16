@@ -109,6 +109,7 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
             balances = {member.username: 0.0 for member in members}
             if member_count == 0:
                 group_balances[group.id] = balances
+                group.owes = []
                 continue  # Skip division for empty groups
             for expense in group_expenses:
                 share = expense.amount / member_count
@@ -125,13 +126,27 @@ async def dashboard(request: Request, db: Session = Depends(get_db), msg: str = 
                     balances[payer.username] += settlement.amount
                     balances[receiver.username] -= settlement.amount
             group_balances[group.id] = balances
-            # For dashboard totals
-            for expense in group_expenses:
-                share = expense.amount / member_count if member_count > 0 else 0
-                if expense.paid_by == user.id:
-                    total_lent += share * (member_count - 1)
-                else:
-                    total_owed += share
+            # Calculate who owes whom
+            owes = []
+            temp_balances = balances.copy()
+            debtors = [m for m in members if temp_balances[m.username] < 0]
+            creditors = [m for m in members if temp_balances[m.username] > 0]
+            for debtor in debtors:
+                amount_to_pay = -temp_balances[debtor.username]
+                for creditor in creditors:
+                    if amount_to_pay == 0:
+                        break
+                    creditor_amount = temp_balances[creditor.username]
+                    pay_amount = min(amount_to_pay, creditor_amount)
+                    if pay_amount > 0:
+                        owes.append({
+                            "debtor": debtor,
+                            "creditor": creditor,
+                            "amount": round(pay_amount, 2)
+                        })
+                        temp_balances[creditor.username] -= pay_amount
+                        amount_to_pay -= pay_amount
+            group.owes = owes
         all_users = db.query(models.User).all()
     except Exception as e:
         return templates.TemplateResponse("dashboard.html", {

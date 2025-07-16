@@ -115,10 +115,19 @@
                                     </form>
                                 {% endif %}
                             {% endfor %}
-                            {% for member in group.members %}
-                                {% set bal = balances[member.username] %}
-                                {% if bal < 0 and member.username == username and receiver and receiver.upi_id %}
-                                    <a href="upi://pay?pa={{ receiver.upi_id }}&pn={{ receiver.username }}&am={{ -bal|round(2) }}&tn=SplitEase+Payment" target="_blank" style="margin: 6px 0; color: #128c7e; font-weight: bold; text-decoration: underline;">Pay {{ receiver.username }} via UPI</a>
+                            {% for owe in group.owes %}
+                                {% if owe.debtor.username == username and owe.creditor.upi_id %}
+                                    <div style="margin-bottom: 8px;">
+                                        <a href="upi://pay?pa={{ owe.creditor.upi_id }}&pn={{ owe.creditor.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
+                                           target="_blank" style="color: #128c7e; font-weight: bold; text-decoration: underline;">
+                                            Pay {{ owe.creditor.username }} ₹{{ owe.amount }} via UPI
+                                        </a>
+                                        <div style="font-size: 0.95em; color: #888; margin-top: 2px;">
+                                            (UPI links work only on mobile. Or scan QR below:)
+                                        </div>
+                                        <img src="https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=upi://pay?pa={{ owe.creditor.upi_id }}&pn={{ owe.creditor.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
+                                             alt="UPI QR Code" style="margin-top: 4px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                                    </div>
                                 {% endif %}
                             {% endfor %}
                             <button onclick="toggleExpenseForm('expense-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-plus-circle"></i> Add Expense</button>
