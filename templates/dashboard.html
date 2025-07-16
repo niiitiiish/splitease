@@ -90,8 +90,10 @@
                             <b>Settlement History</b>
                             <ul style="list-style: none; padding: 0; margin: 0;">
                             {% for settlement in group.settlements[:5] %}
+                                {% set payer = all_users|selectattr('id', 'equalto', settlement.payer_id)|first %}
+                                {% set receiver = all_users|selectattr('id', 'equalto', settlement.receiver_id)|first %}
                                 <li style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 0.98em;">
-                                    <span><i class="fas fa-user"></i> {{ all_users|selectattr('id', 'equalto', settlement.payer_id)|first.username if all_users else '' }} paid <i class="fas fa-user"></i> {{ all_users|selectattr('id', 'equalto', settlement.receiver_id)|first.username if all_users else '' }}</span>
+                                    <span><i class="fas fa-user"></i> {{ payer.username if payer else '' }} paid <i class="fas fa-user"></i> {{ receiver.username if receiver else '' }}</span>
                                     <span style="font-weight: bold; color: #1ca01c;"><i class="fas fa-rupee-sign"></i> {{ settlement.amount }}</span>
                                 </li>
                             {% else %}
