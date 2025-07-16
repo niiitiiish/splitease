@@ -24,10 +24,11 @@
         </nav>
         <main class="main">
             <h1>Welcome, {{ username }}!</h1>
+            {% set current_user = all_users|selectattr('username', 'equalto', username)|first %}
             <div class="upi-section" style="margin-bottom: 20px;">
                 <form method="post" action="/update-upi" style="display: flex; align-items: center; gap: 10px;">
                     <label for="upi_id"><b>Your UPI ID:</b></label>
-                    <input type="text" id="upi_id" name="upi_id" value="{{ all_users|selectattr('username', 'equalto', username)|first.upi_id if all_users else '' }}" placeholder="your-upi@bank" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
+                    <input type="text" id="upi_id" name="upi_id" value="{{ current_user.upi_id if current_user else '' }}" placeholder="your-upi@bank" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
                     <button type="submit" style="padding: 6px 16px; border-radius: 6px; background: #5b3cc4; color: #fff; border: none;">Update</button>
                 </form>
             </div>
