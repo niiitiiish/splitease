@@ -111,11 +111,25 @@
             display: flex;
             transition: transform 0.3s ease-in-out;
             gap: 1rem;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .groups-slider:active {
+            cursor: grabbing;
         }
 
         .group-card {
             flex-shrink: 0;
             scroll-snap-align: start;
+            transition: transform 0.2s ease;
+        }
+
+        .group-card:hover {
+            transform: translateY(-2px);
         }
 
         .group-nav-btn {
@@ -126,6 +140,7 @@
             height: 40px;
             border-radius: 8px;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .group-nav-btn:hover {
@@ -157,6 +172,24 @@
 
         .group-indicator:hover {
             background-color: #9ca3af;
+        }
+
+        /* Drag feedback styles */
+        .groups-slider.dragging {
+            cursor: grabbing;
+            transition: none;
+        }
+
+        .groups-slider.dragging .group-card {
+            transition: none;
+        }
+
+        /* Prevent text selection during drag */
+        .groups-slider * {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
 
         /* Responsive text sizing */
@@ -931,6 +964,14 @@
         let slider = null;
         let indicators = [];
 
+        // Mouse drag variables
+        let isDragging = false;
+        let startPos = 0;
+        let currentTranslate = 0;
+        let prevTranslate = 0;
+        let animationID = 0;
+        let currentIndex = 0;
+
         function initGroupsSlider() {
             sliderContainer = document.getElementById('groupsSlider');
             if (!sliderContainer) return;
@@ -956,18 +997,19 @@
                 indicator.addEventListener('click', () => goToGroup(index));
             });
 
-            // Add touch/swipe support
-            let startX = 0;
-            let endX = 0;
+            // Mouse drag events
+            sliderContainer.addEventListener('mousedown', dragStart);
+            sliderContainer.addEventListener('mousemove', drag);
+            sliderContainer.addEventListener('mouseup', dragEnd);
+            sliderContainer.addEventListener('mouseleave', dragEnd);
 
-            sliderContainer.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-            });
+            // Prevent context menu on right click
+            sliderContainer.addEventListener('contextmenu', e => e.preventDefault());
 
-            sliderContainer.addEventListener('touchend', (e) => {
-                endX = e.changedTouches[0].clientX;
-                handleSwipe();
-            });
+            // Touch/swipe support
+            sliderContainer.addEventListener('touchstart', touchStart);
+            sliderContainer.addEventListener('touchmove', touchMove);
+            sliderContainer.addEventListener('touchend', touchEnd);
 
             // Add keyboard navigation
             document.addEventListener('keydown', (e) => {
@@ -977,6 +1019,113 @@
                     navigateGroups(1);
                 }
             });
+
+            // Add cursor styles
+            sliderContainer.style.cursor = 'grab';
+            sliderContainer.style.userSelect = 'none';
+        }
+
+        function dragStart(event) {
+            isDragging = true;
+            startPos = getPositionX(event);
+            animationID = requestAnimationFrame(animation);
+            sliderContainer.style.cursor = 'grabbing';
+            sliderContainer.style.userSelect = 'none';
+            sliderContainer.classList.add('dragging');
+        }
+
+        function drag(event) {
+            if (isDragging) {
+                const currentPosition = getPositionX(event);
+                currentTranslate = prevTranslate + currentPosition - startPos;
+            }
+        }
+
+        function dragEnd() {
+            isDragging = false;
+            cancelAnimationFrame(animationID);
+            sliderContainer.style.cursor = 'grab';
+            sliderContainer.classList.remove('dragging');
+            
+            const movedBy = currentTranslate - prevTranslate;
+            
+            // Determine if we should move to next/previous slide
+            if (Math.abs(movedBy) > 100) {
+                if (movedBy < 0) {
+                    // Dragged left - go to next
+                    if (currentGroupIndex < totalGroups - 1) {
+                        currentGroupIndex++;
+                    }
+                } else {
+                    // Dragged right - go to previous
+                    if (currentGroupIndex > 0) {
+                        currentGroupIndex--;
+                    }
+                }
+            }
+            
+            setPositionByIndex();
+            updateIndicators();
+        }
+
+        function touchStart(event) {
+            const touch = event.touches[0];
+            startPos = touch.clientX;
+            isDragging = true;
+            animationID = requestAnimationFrame(animation);
+            sliderContainer.classList.add('dragging');
+        }
+
+        function touchMove(event) {
+            if (isDragging) {
+                const touch = event.touches[0];
+                const currentPosition = touch.clientX;
+                currentTranslate = prevTranslate + currentPosition - startPos;
+            }
+        }
+
+        function touchEnd() {
+            isDragging = false;
+            cancelAnimationFrame(animationID);
+            sliderContainer.classList.remove('dragging');
+            
+            const movedBy = currentTranslate - prevTranslate;
+            
+            if (Math.abs(movedBy) > 50) {
+                if (movedBy < 0) {
+                    if (currentGroupIndex < totalGroups - 1) {
+                        currentGroupIndex++;
+                    }
+                } else {
+                    if (currentGroupIndex > 0) {
+                        currentGroupIndex--;
+                    }
+                }
+            }
+            
+            setPositionByIndex();
+            updateIndicators();
+        }
+
+        function getPositionX(event) {
+            return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
+        }
+
+        function animation() {
+            setSliderPosition(currentTranslate);
+            if (isDragging) requestAnimationFrame(animation);
+        }
+
+        function setSliderPosition(position) {
+            sliderContainer.style.transform = `translateX(${position}px)`;
+        }
+
+        function setPositionByIndex() {
+            const cardWidth = sliderContainer.querySelector('.group-card').offsetWidth;
+            const gap = 16; // 1rem gap
+            currentTranslate = -(currentGroupIndex * (cardWidth + gap));
+            prevTranslate = currentTranslate;
+            setSliderPosition(currentTranslate);
         }
 
         function navigateGroups(direction) {
@@ -984,7 +1133,7 @@
             
             if (newIndex >= 0 && newIndex < totalGroups) {
                 currentGroupIndex = newIndex;
-                updateSlider();
+                setPositionByIndex();
                 updateIndicators();
             }
         }
@@ -992,19 +1141,14 @@
         function goToGroup(index) {
             if (index >= 0 && index < totalGroups) {
                 currentGroupIndex = index;
-                updateSlider();
+                setPositionByIndex();
                 updateIndicators();
             }
         }
 
         function updateSlider() {
             if (!sliderContainer) return;
-            
-            const cardWidth = sliderContainer.querySelector('.group-card').offsetWidth;
-            const gap = 16; // 1rem gap
-            const translateX = -(currentGroupIndex * (cardWidth + gap));
-            
-            sliderContainer.style.transform = `translateX(${translateX}px)`;
+            setPositionByIndex();
         }
 
         function updateIndicators() {
@@ -1019,7 +1163,7 @@
 
         function handleSwipe() {
             const swipeThreshold = 50;
-            const diff = startX - endX;
+            const diff = startPos - endX;
             
             if (Math.abs(diff) > swipeThreshold) {
                 if (diff > 0) {
