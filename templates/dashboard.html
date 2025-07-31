@@ -86,7 +86,7 @@
         /* Card and content sizing */
         .group-card {
             min-width: 280px;
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
         }
 
@@ -99,6 +99,64 @@
         .expense-card {
             width: 100%;
             max-width: 500px;
+        }
+
+        /* Groups Slider Styles */
+        .groups-slider-container {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .groups-slider {
+            display: flex;
+            transition: transform 0.3s ease-in-out;
+            gap: 1rem;
+        }
+
+        .group-card {
+            flex-shrink: 0;
+            scroll-snap-align: start;
+        }
+
+        .group-nav-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .group-nav-btn:hover {
+            background-color: #f3f4f6;
+            transform: scale(1.05);
+        }
+
+        .group-nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .group-indicators {
+            margin-top: 1rem;
+        }
+
+        .group-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .group-indicator.active {
+            background-color: #8b5cf6;
+            transform: scale(1.2);
+        }
+
+        .group-indicator:hover {
+            background-color: #9ca3af;
         }
 
         /* Responsive text sizing */
@@ -620,155 +678,179 @@
 
                 <!-- Groups Section -->
                 <div class="groups mb-8 sm:mb-10">
-                    <h2 class="responsive-subheading font-bold text-gray-900 mb-4 sm:mb-5 overflow-safe">My Groups</h2>
+                    <div class="flex items-center justify-between mb-4 sm:mb-5">
+                        <h2 class="responsive-subheading font-bold text-gray-900 overflow-safe">My Groups</h2>
+                        {% if groups and groups|length > 1 %}
+                        <div class="flex space-x-2">
+                            <button id="prevGroup" class="group-nav-btn bg-white border border-gray-300 rounded-lg p-2 hover:bg-gray-50 transition-colors duration-200">
+                                <i class="fas fa-chevron-left text-gray-600"></i>
+                            </button>
+                            <button id="nextGroup" class="group-nav-btn bg-white border border-gray-300 rounded-lg p-2 hover:bg-gray-50 transition-colors duration-200">
+                                <i class="fas fa-chevron-right text-gray-600"></i>
+                            </button>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
                     {% if groups %}
-                    <div class="groups-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-6">
-                        {% for group in groups %}
-                        <div class="group-card bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-                            <div class="group-header p-4 sm:p-6 border-b border-gray-100">
-                                <div class="group-title flex items-center text-lg sm:text-xl font-semibold text-gray-800 mb-2 overflow-safe">
-                                    <i class="fas fa-users text-purple-600 mr-2 sm:mr-3 flex-shrink-0"></i> 
-                                    <span class="text-truncate">{{ group.name }}</span>
-                                </div>
-                                <div class="group-meta text-xs sm:text-sm text-gray-500 flex items-center justify-between overflow-safe">
-                                    <span><i class="fas fa-user-friends mr-1"></i> {{ group.members|length }} people</span>
-                                    <span><i class="fas fa-rupee-sign mr-1"></i> ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }}</span>
-                                </div>
-                            </div>
-                            
-                            <div class="group-content p-4 sm:p-6">
-                                <!-- Members Summary -->
-                                <div class="group-members mb-4">
-                                    <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Members</h4>
-                                    <div class="members-list space-y-2">
-                                        {% set balances = group_balances[group.id] %}
-                                        {% for member in group.members[:3] %}
-                                        <div class="member-item flex items-center justify-between">
-                                            <div class="flex items-center space-x-2 min-w-0 flex-1">
-                                                <span class="member-initial bg-purple-100 text-purple-700 font-bold rounded-full h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center text-xs flex-shrink-0">{{ member.username[0]|upper }}</span>
-                                                <span class="member-name text-gray-700 text-sm text-truncate overflow-safe">{{ member.username }}</span>
-                                            </div>
-                                            <span class="member-balance font-semibold text-xs sm:text-sm flex-shrink-0
-                                                {% if balances[member.username] > 0 %}text-green-600{% elif balances[member.username] < 0 %}text-red-600{% else %}text-gray-500{% endif %}">
-                                                {% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}
-                                            </span>
-                                        </div>
-                                        {% endfor %}
-                                        {% if group.members|length > 3 %}
-                                        <div class="text-xs text-gray-500 text-center pt-1">
-                                            +{{ group.members|length - 3 }} more members
-                                        </div>
-                                        {% endif %}
+                    <div class="groups-slider-container relative">
+                        <div id="groupsSlider" class="groups-slider flex transition-transform duration-300 ease-in-out gap-4 sm:gap-6">
+                            {% for group in groups %}
+                            <div class="group-card bg-white rounded-xl shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-300 flex-shrink-0 w-full sm:w-80 md:w-96 lg:w-[420px] xl:w-[450px]">
+                                <div class="group-header p-4 sm:p-6 border-b border-gray-100">
+                                    <div class="group-title flex items-center text-lg sm:text-xl font-semibold text-gray-800 mb-2 overflow-safe">
+                                        <i class="fas fa-users text-purple-600 mr-2 sm:mr-3 flex-shrink-0"></i> 
+                                        <span class="text-truncate">{{ group.name }}</span>
+                                    </div>
+                                    <div class="group-meta text-xs sm:text-sm text-gray-500 flex items-center justify-between overflow-safe">
+                                        <span><i class="fas fa-user-friends mr-1"></i> {{ group.members|length }} people</span>
+                                        <span><i class="fas fa-rupee-sign mr-1"></i> ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }}</span>
                                     </div>
                                 </div>
-
-                                <!-- Recent Expenses -->
-                                <div class="group-expenses mb-4">
-                                    <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Recent Expenses</h4>
-                                    <div class="expenses-list space-y-2">
-                                        {% for expense in group.expenses[:2] %}
-                                        <div class="expense-item flex justify-between items-center text-xs sm:text-sm">
-                                            <div class="min-w-0 flex-1">
-                                                <div class="text-gray-700 text-truncate overflow-safe">
-                                                    <i class="fas fa-user mr-1 text-gray-500"></i> {{ expense.payer.username }}
+                                
+                                <div class="group-content p-4 sm:p-6">
+                                    <!-- Members Summary -->
+                                    <div class="group-members mb-4">
+                                        <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Members</h4>
+                                        <div class="members-list space-y-2">
+                                            {% set balances = group_balances[group.id] %}
+                                            {% for member in group.members[:3] %}
+                                            <div class="member-item flex items-center justify-between">
+                                                <div class="flex items-center space-x-2 min-w-0 flex-1">
+                                                    <span class="member-initial bg-purple-100 text-purple-700 font-bold rounded-full h-6 w-6 sm:h-7 sm:w-7 flex items-center justify-center text-xs flex-shrink-0">{{ member.username[0]|upper }}</span>
+                                                    <span class="member-name text-gray-700 text-sm text-truncate overflow-safe">{{ member.username }}</span>
                                                 </div>
-                                                <div class="text-gray-600 text-truncate overflow-safe">
-                                                    <i class="fas fa-comment-dots mr-1 text-gray-500"></i> {{ expense.description }}
-                                                </div>
+                                                <span class="member-balance font-semibold text-xs sm:text-sm flex-shrink-0
+                                                    {% if balances[member.username] > 0 %}text-green-600{% elif balances[member.username] < 0 %}text-red-600{% else %}text-gray-500{% endif %}">
+                                                    {% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}
+                                                </span>
                                             </div>
-                                            <span class="font-bold text-purple-600 flex-shrink-0 ml-2">₹{{ expense.amount }}</span>
+                                            {% endfor %}
+                                            {% if group.members|length > 3 %}
+                                            <div class="text-xs text-gray-500 text-center pt-1">
+                                                +{{ group.members|length - 3 }} more members
+                                            </div>
+                                            {% endif %}
                                         </div>
-                                        {% else %}
-                                        <div class="text-gray-400 text-xs sm:text-sm text-center py-2">No expenses yet</div>
-                                        {% endfor %}
                                     </div>
-                                </div>
 
-                                <!-- Settlement Status -->
-                                <div class="settlement-status mb-4">
-                                    <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Settlement Status</h4>
-                                    {% set has_settlements = group.settlements|length > 0 %}
-                                    {% if has_settlements %}
-                                    <div class="text-xs sm:text-sm text-gray-600">
-                                        <i class="fas fa-check-circle text-green-500 mr-1"></i>
-                                        {{ group.settlements|length }} settlement{{ 's' if group.settlements|length != 1 else '' }} recorded
-                                    </div>
-                                    {% else %}
-                                    <div class="text-xs sm:text-sm text-gray-500">
-                                        <i class="fas fa-info-circle text-blue-500 mr-1"></i>
-                                        No settlements yet
-                                    </div>
-                                    {% endif %}
-                                </div>
-
-                                <!-- Quick Actions -->
-                                <div class="group-actions space-y-2">
-                                    <!-- Settlement Actions -->
-                                    {% for owe in group.owes %}
-                                        {% if owe.debtor.username == username %}
-                                            {% set creditor_user = all_users|selectattr('username', 'equalto', owe.creditor.username)|first %}
-                                            {% if creditor_user and creditor_user.upi_id %}
-                                                <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 text-center">
-                                                    <a href="upi://pay?pa={{ creditor_user.upi_id }}&pn={{ creditor_user.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
-                                                       target="_blank" class="text-blue-700 font-bold hover:underline text-xs block mb-1 overflow-safe">
-                                                        Pay ₹{{ owe.amount }} to {{ creditor_user.username }}
-                                                    </a>
-                                                    <div class="text-xs text-gray-500 overflow-safe">
-                                                        Tap to pay via UPI
+                                    <!-- Recent Expenses -->
+                                    <div class="group-expenses mb-4">
+                                        <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Recent Expenses</h4>
+                                        <div class="expenses-list space-y-2">
+                                            {% for expense in group.expenses[:2] %}
+                                            <div class="expense-item flex justify-between items-center text-xs sm:text-sm">
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="text-gray-700 text-truncate overflow-safe">
+                                                        <i class="fas fa-user mr-1 text-gray-500"></i> {{ expense.payer.username }}
+                                                    </div>
+                                                    <div class="text-gray-600 text-truncate overflow-safe">
+                                                        <i class="fas fa-comment-dots mr-1 text-gray-500"></i> {{ expense.description }}
                                                     </div>
                                                 </div>
+                                                <span class="font-bold text-purple-600 flex-shrink-0 ml-2">₹{{ expense.amount }}</span>
+                                            </div>
                                             {% else %}
-                                                <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-center">
-                                                    <p class="text-yellow-700 text-xs overflow-safe">You owe {{ owe.creditor.username }} ₹{{ owe.amount }}</p>
-                                                    <p class="text-yellow-600 text-xs mt-1 overflow-safe">Ask for UPI ID</p>
-                                                </div>
-                                            {% endif %}
-                                        {% endif %}
-                                    {% endfor %}
-                                    
-                                    <!-- Action Buttons -->
-                                    <div class="flex flex-col space-y-2">
-                                        <button onclick="toggleForm('expense-form-{{ group.id }}')" class="w-full bg-purple-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
-                                            <i class="fas fa-plus-circle"></i> <span>Add Expense</span>
-                                        </button>
-                                        
-                                        <button onclick="toggleForm('invite-form-{{ group.id }}')" class="w-full bg-indigo-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
-                                            <i class="fas fa-user-plus"></i> <span>Invite Friend</span>
-                                        </button>
-                                        
-                                        <button onclick="showDeleteConfirm('delete-form-{{ group.id }}')" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
-                                            <i class="fas fa-trash"></i> <span>Delete Group</span>
-                                        </button>
+                                            <div class="text-gray-400 text-xs sm:text-sm text-center py-2">No expenses yet</div>
+                                            {% endfor %}
+                                        </div>
                                     </div>
 
-                                    <!-- Hidden Forms -->
-                                    <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" class="hidden space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
-                                        <input type="hidden" name="group_id" value="{{ group.id }}">
-                                        <input type="text" name="description" placeholder="Reason" required
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-xs sm:text-sm">
-                                        <input type="number" name="amount" placeholder="Amount" step="0.01" min="0" required
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-xs sm:text-sm">
-                                        <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-md font-semibold hover:bg-purple-700 transition-colors duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2">
-                                            <i class="fas fa-check"></i> <span>Add</span>
-                                        </button>
-                                    </form>
-                                    
-                                    <form id="invite-form-{{ group.id }}" method="post" action="/dashboard/invite-user" class="hidden space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
-                                        <input type="hidden" name="group_id" value="{{ group.id }}">
-                                        <input type="text" name="username" placeholder="Friend's username" required
-                                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-300 focus:border-indigo-500 text-xs sm:text-sm">
-                                        <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700 transition-colors duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2">
-                                            <i class="fas fa-paper-plane"></i> <span>Invite</span>
-                                        </button>
-                                    </form>
-                                    
-                                    <form id="delete-form-{{ group.id }}" method="post" action="/dashboard/delete-group" class="hidden">
-                                        <input type="hidden" name="group_id" value="{{ group.id }}">
-                                    </form>
+                                    <!-- Settlement Status -->
+                                    <div class="settlement-status mb-4">
+                                        <h4 class="text-sm sm:text-base font-semibold text-gray-700 mb-2 overflow-safe">Settlement Status</h4>
+                                        {% set has_settlements = group.settlements|length > 0 %}
+                                        {% if has_settlements %}
+                                        <div class="text-xs sm:text-sm text-gray-600">
+                                            <i class="fas fa-check-circle text-green-500 mr-1"></i>
+                                            {{ group.settlements|length }} settlement{{ 's' if group.settlements|length != 1 else '' }} recorded
+                                        </div>
+                                        {% else %}
+                                        <div class="text-xs sm:text-sm text-gray-500">
+                                            <i class="fas fa-info-circle text-blue-500 mr-1"></i>
+                                            No settlements yet
+                                        </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <!-- Quick Actions -->
+                                    <div class="group-actions space-y-2">
+                                        <!-- Settlement Actions -->
+                                        {% for owe in group.owes %}
+                                            {% if owe.debtor.username == username %}
+                                                {% set creditor_user = all_users|selectattr('username', 'equalto', owe.creditor.username)|first %}
+                                                {% if creditor_user and creditor_user.upi_id %}
+                                                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-100 text-center">
+                                                        <a href="upi://pay?pa={{ creditor_user.upi_id }}&pn={{ creditor_user.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
+                                                           target="_blank" class="text-blue-700 font-bold hover:underline text-xs block mb-1 overflow-safe">
+                                                            Pay ₹{{ owe.amount }} to {{ creditor_user.username }}
+                                                        </a>
+                                                        <div class="text-xs text-gray-500 overflow-safe">
+                                                            Tap to pay via UPI
+                                                        </div>
+                                                    </div>
+                                                {% else %}
+                                                    <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-center">
+                                                        <p class="text-yellow-700 text-xs overflow-safe">You owe {{ owe.creditor.username }} ₹{{ owe.amount }}</p>
+                                                        <p class="text-yellow-600 text-xs mt-1 overflow-safe">Ask for UPI ID</p>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endfor %}
+                                        
+                                        <!-- Action Buttons -->
+                                        <div class="flex flex-col space-y-2">
+                                            <button onclick="toggleForm('expense-form-{{ group.id }}')" class="w-full bg-purple-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                                                <i class="fas fa-plus-circle"></i> <span>Add Expense</span>
+                                            </button>
+                                            
+                                            <button onclick="toggleForm('invite-form-{{ group.id }}')" class="w-full bg-indigo-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-indigo-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                                                <i class="fas fa-user-plus"></i> <span>Invite Friend</span>
+                                            </button>
+                                            
+                                            <button onclick="showDeleteConfirm('delete-form-{{ group.id }}')" class="w-full bg-red-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs sm:text-sm">
+                                                <i class="fas fa-trash"></i> <span>Delete Group</span>
+                                            </button>
+                                        </div>
+
+                                        <!-- Hidden Forms -->
+                                        <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" class="hidden space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                                            <input type="text" name="description" placeholder="Reason" required
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-xs sm:text-sm">
+                                            <input type="number" name="amount" placeholder="Amount" step="0.01" min="0" required
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-xs sm:text-sm">
+                                            <button type="submit" class="w-full bg-purple-600 text-white py-2 rounded-md font-semibold hover:bg-purple-700 transition-colors duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2">
+                                                <i class="fas fa-check"></i> <span>Add</span>
+                                            </button>
+                                        </form>
+                                        
+                                        <form id="invite-form-{{ group.id }}" method="post" action="/dashboard/invite-user" class="hidden space-y-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                                            <input type="text" name="username" placeholder="Friend's username" required
+                                                   class="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-300 focus:border-indigo-500 text-xs sm:text-sm">
+                                            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700 transition-colors duration-200 text-xs sm:text-sm flex items-center justify-center space-x-2">
+                                                <i class="fas fa-paper-plane"></i> <span>Invite</span>
+                                            </button>
+                                        </form>
+                                        
+                                        <form id="delete-form-{{ group.id }}" method="post" action="/dashboard/delete-group" class="hidden">
+                                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                                        </form>
+                                    </div>
                                 </div>
                             </div>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
+                        
+                        <!-- Group Indicators -->
+                        {% if groups and groups|length > 1 %}
+                        <div class="group-indicators flex justify-center space-x-2 mt-4">
+                            {% for group in groups %}
+                            <button class="group-indicator w-2 h-2 rounded-full bg-gray-300 hover:bg-gray-400 transition-colors duration-200" data-index="{{ loop.index0 }}"></button>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
                     </div>
                     {% else %}
                     <div class="text-center py-8 sm:py-12">
@@ -842,6 +924,114 @@
     </div>
 
     <script>
+        // Groups Slider functionality
+        let currentGroupIndex = 0;
+        let totalGroups = 0;
+        let sliderContainer = null;
+        let slider = null;
+        let indicators = [];
+
+        function initGroupsSlider() {
+            sliderContainer = document.getElementById('groupsSlider');
+            if (!sliderContainer) return;
+
+            const groupCards = sliderContainer.querySelectorAll('.group-card');
+            totalGroups = groupCards.length;
+            
+            if (totalGroups <= 1) return;
+
+            // Initialize indicators
+            indicators = document.querySelectorAll('.group-indicator');
+            updateIndicators();
+
+            // Add navigation button listeners
+            const prevBtn = document.getElementById('prevGroup');
+            const nextBtn = document.getElementById('nextGroup');
+            
+            if (prevBtn) prevBtn.addEventListener('click', () => navigateGroups(-1));
+            if (nextBtn) nextBtn.addEventListener('click', () => navigateGroups(1));
+
+            // Add indicator listeners
+            indicators.forEach((indicator, index) => {
+                indicator.addEventListener('click', () => goToGroup(index));
+            });
+
+            // Add touch/swipe support
+            let startX = 0;
+            let endX = 0;
+
+            sliderContainer.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+
+            sliderContainer.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                handleSwipe();
+            });
+
+            // Add keyboard navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    navigateGroups(-1);
+                } else if (e.key === 'ArrowRight') {
+                    navigateGroups(1);
+                }
+            });
+        }
+
+        function navigateGroups(direction) {
+            const newIndex = currentGroupIndex + direction;
+            
+            if (newIndex >= 0 && newIndex < totalGroups) {
+                currentGroupIndex = newIndex;
+                updateSlider();
+                updateIndicators();
+            }
+        }
+
+        function goToGroup(index) {
+            if (index >= 0 && index < totalGroups) {
+                currentGroupIndex = index;
+                updateSlider();
+                updateIndicators();
+            }
+        }
+
+        function updateSlider() {
+            if (!sliderContainer) return;
+            
+            const cardWidth = sliderContainer.querySelector('.group-card').offsetWidth;
+            const gap = 16; // 1rem gap
+            const translateX = -(currentGroupIndex * (cardWidth + gap));
+            
+            sliderContainer.style.transform = `translateX(${translateX}px)`;
+        }
+
+        function updateIndicators() {
+            indicators.forEach((indicator, index) => {
+                if (index === currentGroupIndex) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = startX - endX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swiped left - go to next
+                    navigateGroups(1);
+                } else {
+                    // Swiped right - go to previous
+                    navigateGroups(-1);
+                }
+            }
+        }
+
         // Function to toggle form visibility
         function toggleForm(id) {
             const el = document.getElementById(id);
@@ -884,6 +1074,16 @@
                 }
             };
         }
+
+        // Initialize slider when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initGroupsSlider();
+            
+            // Reinitialize on window resize
+            window.addEventListener('resize', () => {
+                setTimeout(updateSlider, 100);
+            });
+        });
     </script>
 </body>
 </html>
