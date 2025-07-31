@@ -821,11 +821,31 @@
                                                         <div class="text-xs text-gray-500 overflow-safe">
                                                             Tap to pay via UPI
                                                         </div>
+                                                        <!-- Settle Up Button -->
+                                                        <form method="post" action="/dashboard/settle-up" class="mt-2">
+                                                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                                                            <input type="hidden" name="receiver_id" value="{{ creditor_user.id }}">
+                                                            <input type="hidden" name="amount" value="{{ owe.amount }}">
+                                                            <button type="submit" class="w-full bg-green-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs">
+                                                                <i class="fas fa-handshake"></i>
+                                                                <span>Mark as Settled</span>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 {% else %}
                                                     <div class="bg-yellow-50 p-3 rounded-lg border border-yellow-100 text-center">
                                                         <p class="text-yellow-700 text-xs overflow-safe">You owe {{ owe.creditor.username }} ₹{{ owe.amount }}</p>
                                                         <p class="text-yellow-600 text-xs mt-1 overflow-safe">Ask for UPI ID</p>
+                                                        <!-- Settle Up Button (without UPI) -->
+                                                        <form method="post" action="/dashboard/settle-up" class="mt-2">
+                                                            <input type="hidden" name="group_id" value="{{ group.id }}">
+                                                            <input type="hidden" name="receiver_id" value="{{ owe.creditor.id }}">
+                                                            <input type="hidden" name="amount" value="{{ owe.amount }}">
+                                                            <button type="submit" class="w-full bg-green-500 text-white py-2 px-3 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center justify-center space-x-2 text-xs">
+                                                                <i class="fas fa-handshake"></i>
+                                                                <span>Mark as Settled</span>
+                                                            </button>
+                                                        </form>
                                                     </div>
                                                 {% endif %}
                                             {% endif %}
