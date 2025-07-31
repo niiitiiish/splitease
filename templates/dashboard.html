@@ -2,221 +2,378 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="/static/styles/dashboard.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css">
+    <!-- Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            @apply bg-gray-50 text-gray-800;
+        }
+        /* Custom scrollbar for horizontal group list */
+        .groups-list::-webkit-scrollbar {
+            height: 8px;
+        }
+        .groups-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .groups-list::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        .groups-list::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Hide default scrollbar for all other elements if needed, but keep for overflow-x */
+        /* html, body { scrollbar-width: none; } */
+        /* ::-webkit-scrollbar { display: none; } */
+    </style>
 </head>
-<body>
-    <div class="navbar">
-        <div class="navbar-left">
-            <img src="/static/splitease.png" alt="Spiltease Icon">
-            Spiltease
+<body class="min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <div class="navbar bg-white shadow-sm py-4 px-6 flex justify-between items-center sticky top-0 z-10">
+        <div class="navbar-left flex items-center space-x-3">
+            <!-- Using a placeholder for the image, replace with actual path if available -->
+            <img src="https://placehold.co/40x40/5b3cc4/ffffff?text=SE" alt="Spiltease Icon" class="h-10 w-10 rounded-full">
+            <span class="text-2xl font-semibold text-gray-900">Spiltease</span>
         </div>
         <div class="navbar-right">
-            <a href="/logout"><i class="fas fa-power-off"></i></a>
+            <a href="/logout" class="text-gray-600 hover:text-red-500 transition-colors duration-200">
+                <i class="fas fa-power-off text-xl"></i>
+            </a>
         </div>
     </div>
-    <div class="container">
-        <nav class="sidebar">
+
+    <div class="flex flex-1">
+        <!-- Sidebar -->
+        <nav class="sidebar bg-white shadow-md w-16 md:w-20 lg:w-24 py-6 flex flex-col items-center border-r border-gray-100">
             <ul>
-                <li><a href="/dashboard"><i class="fas fa-home"></i></a></li>
+                <li>
+                    <a href="/dashboard" class="flex items-center justify-center p-3 rounded-lg text-gray-600 hover:bg-purple-100 hover:text-purple-700 transition-colors duration-200">
+                        <i class="fas fa-home text-2xl"></i>
+                    </a>
+                </li>
             </ul>
         </nav>
-        <main class="main">
-            <h1>Welcome, {{ username }}!</h1>
-            {% set current_user = all_users|selectattr('username', 'equalto', username)|first %}
-            <div class="upi-section" style="margin-bottom: 20px;">
-                <form method="post" action="/update-upi" style="display: flex; align-items: center; gap: 10px;">
-                    <label for="upi_id"><b>Your UPI ID:</b></label>
-                    <input type="text" id="upi_id" name="upi_id" value="{{ current_user.upi_id if current_user else '' }}" placeholder="your-upi@bank" style="padding: 6px 10px; border-radius: 6px; border: 1px solid #ccc;">
-                    <button type="submit" style="padding: 6px 16px; border-radius: 6px; background: #5b3cc4; color: #fff; border: none;">Update</button>
-                </form>
-            </div>
+
+        <!-- Main Content -->
+        <main class="main flex-1 p-6 md:p-8 lg:p-10">
+            <h1 class="text-3xl font-bold text-gray-900 mb-6">Welcome, {{ username }}!</h1>
+
+            <!-- Message Display -->
             {% if msg %}
-            <div style="background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px 20px; border-radius: 5px; margin-bottom: 15px;">
+            <div class="bg-red-100 text-red-700 border border-red-200 px-5 py-3 rounded-lg mb-6 text-sm" role="alert">
                 {{ msg }}
             </div>
             {% endif %}
-            <!-- Invitations Section -->
-          
-            <div class="cards">
-                <div class="card">
-                    Total Owed
-                    <span>₹{{ total_owed }}</span>
+
+            <!-- UPI Section -->
+            {% set current_user = all_users|selectattr('username', 'equalto', username)|first %}
+            <div class="upi-section bg-white p-6 rounded-lg shadow-sm mb-8 border border-gray-100">
+                <form method="post" action="/update-upi" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                    <label for="upi_id" class="text-lg font-medium text-gray-700 w-full sm:w-auto">Your UPI ID:</label>
+                    <input type="text" id="upi_id" name="upi_id" value="{{ current_user.upi_id if current_user else '' }}" placeholder="your-upi@bank"
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-500 transition-all duration-200 w-full sm:w-auto">
+                    <button type="submit" class="px-6 py-2 bg-purple-600 text-white font-semibold rounded-lg shadow-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all duration-200 w-full sm:w-auto">
+                        Update
+                    </button>
+                </form>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="cards grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="card bg-gradient-to-br from-purple-500 to-purple-700 text-white p-6 rounded-xl shadow-lg flex flex-col items-center justify-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-lg font-medium mb-2 opacity-90">Total Owed</div>
+                    <span class="text-4xl font-bold">₹{{ total_owed }}</span>
                 </div>
-                <div class="card">
-                    Total Lent
-                    <span>₹{{ total_lent }}</span>
+                <div class="card bg-gradient-to-br from-green-500 to-green-700 text-white p-6 rounded-xl shadow-lg flex flex-col items-center justify-center transform hover:scale-105 transition-transform duration-300">
+                    <div class="text-lg font-medium mb-2 opacity-90">Total Lent</div>
+                    <span class="text-4xl font-bold">₹{{ total_lent }}</span>
                 </div>
             </div>
-            <div class="groups">
-                <h2>My Groups</h2>
-                <div class="groups-list" style="display: flex; flex-wrap: nowrap; gap: 24px; overflow-x: auto; padding-bottom: 12px;">
+
+            <!-- Pending Invitations Section -->
+            {% if invitations %}
+            <div class="invitations mb-10">
+                <h2 class="text-2xl font-bold text-gray-900 mb-5">Pending Invitations</h2>
+                <div class="invitations-list grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {% for invite in invitations %}
+                    <div class="invitation-card bg-white p-6 rounded-xl shadow-md border border-gray-100">
+                        <div class="invitation-header flex items-center mb-4">
+                            <i class="fas fa-envelope text-orange-500 text-xl mr-3"></i>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Group Invitation</h3>
+                                <p class="text-sm text-gray-500">You've been invited to join a group</p>
+                            </div>
+                        </div>
+                        <div class="invitation-details mb-4">
+                            <p class="text-gray-700"><strong>Group:</strong> 
+                                {% set group = groups|selectattr('id', 'equalto', invite.group_id)|first %}
+                                {{ group.name if group else 'Unknown Group' }}
+                            </p>
+                        </div>
+                        <form method="post" action="/dashboard/accept-invite" class="flex gap-2">
+                            <input type="hidden" name="invite_id" value="{{ invite.id }}">
+                            <button type="submit" class="flex-1 bg-green-500 text-white py-2 px-4 rounded-lg font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-check"></i> <span>Accept</span>
+                            </button>
+                        </form>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Groups Section -->
+            <div class="groups mb-10">
+                <h2 class="text-2xl font-bold text-gray-900 mb-5">My Groups</h2>
+                {% if groups %}
+                <div class="groups-list flex flex-nowrap gap-6 pb-4 overflow-x-auto">
                     {% for group in groups %}
-                    <div class="group-card">
-                        <div class="group-title">
-                            <i class="fas fa-users"></i> {{ group.name }}
+                    <div class="group-card bg-white p-6 rounded-xl shadow-md border border-gray-100 flex-shrink-0 w-80 sm:w-96">
+                        <div class="group-title flex items-center text-xl font-semibold text-gray-800 mb-3">
+                            <i class="fas fa-users text-purple-600 mr-3"></i> {{ group.name }}
                         </div>
-                        <div class="group-meta">
-                            <i class="fas fa-user-friends"></i> {{ group.members|length }} people &bull; <i class="fas fa-rupee-sign"></i> ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }} total
+                        <div class="group-meta text-sm text-gray-500 mb-4 flex items-center space-x-3">
+                            <span><i class="fas fa-user-friends mr-1"></i> {{ group.members|length }} people</span>
+                            <span>&bull;</span>
+                            <span><i class="fas fa-rupee-sign mr-1"></i> ₹{{ group.expenses|map(attribute='amount')|sum|round(2) }} total</span>
                         </div>
-                        <div class="group-members">
-                            <b>Members</b>
-                            <ul>
-                            {% set balances = group_balances[group.id] %}
-                            {% for member in group.members %}
-                                <li class="member-row {% if balances[member.username] > 0 %}positive{% else %}negative{% endif %}">
-                                    <span class="member-initial">{{ member.username[0]|upper }}</span>
-                                    <span class="member-name">{{ member.username }}</span>
-                                    <span class="member-balance {% if balances[member.username] > 0 %}positive{% else %}negative{% endif %}">{% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}</span>
+                        <div class="group-members mb-4">
+                            <b class="text-gray-700 text-md block mb-2">Members</b>
+                            <ul class="list-none p-0 m-0">
+                                {% set balances = group_balances[group.id] %}
+                                {% for member in group.members %}
+                                <li class="member-row flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="member-initial bg-purple-100 text-purple-700 font-bold rounded-full h-8 w-8 flex items-center justify-center text-sm">{{ member.username[0]|upper }}</span>
+                                        <span class="member-name text-gray-700">{{ member.username }}</span>
+                                    </div>
+                                    <span class="member-balance font-semibold
+                                        {% if balances[member.username] > 0 %}text-green-600{% elif balances[member.username] < 0 %}text-red-600{% else %}text-gray-500{% endif %}">
+                                        {% if balances[member.username] > 0 %}+{% endif %}{{ balances[member.username]|round(2) }}
+                                    </span>
                                 </li>
-                            {% endfor %}
+                                {% endfor %}
                             </ul>
                         </div>
-                        <div class="group-expenses" style="margin-top: 12px;">
-                            <b>Recent Expenses</b>
-                            <ul style="list-style: none; padding: 0; margin: 0;">
-                            {% for expense in group.expenses[:3] %}
-                                <li style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 1em;">
-                                    <span><i class="fas fa-user"></i> {{ expense.payer.username }}<br><i class="fas fa-comment-dots"></i> {{ expense.description }}</span>
-                                    <span style="font-weight: bold; color: #5b3cc4;"><i class="fas fa-rupee-sign"></i> {{ expense.amount }}</span>
+                        <div class="group-expenses mb-4">
+                            <b class="text-gray-700 text-md block mb-2">Recent Expenses</b>
+                            <ul class="list-none p-0 m-0">
+                                {% for expense in group.expenses[:3] %}
+                                <li class="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0 text-sm">
+                                    <div>
+                                        <span class="block text-gray-700"><i class="fas fa-user mr-1 text-gray-500"></i> {{ expense.payer.username }}</span>
+                                        <span class="block text-gray-600 text-xs"><i class="fas fa-comment-dots mr-1 text-gray-500"></i> {{ expense.description }}</span>
+                                    </div>
+                                    <span class="font-bold text-purple-600">₹{{ expense.amount }}</span>
                                 </li>
-                            {% else %}
-                                <li style="color: #aaa; font-size: 0.98em;">No expenses yet.</li>
-                            {% endfor %}
+                                {% else %}
+                                <li class="text-gray-400 text-sm py-2">No expenses yet.</li>
+                                {% endfor %}
                             </ul>
                         </div>
-                        <div class="group-settlements" style="margin-top: 12px;">
-                            <b>Settlement History</b>
-                            <ul style="list-style: none; padding: 0; margin: 0;">
-                            {% for settlement in group.settlements[:5] %}
+                        <div class="group-settlements mb-6">
+                            <b class="text-gray-700 text-md block mb-2">Settlement History</b>
+                            <ul class="list-none p-0 m-0">
+                                {% for settlement in group.settlements[:5] %}
                                 {% set payer = all_users|selectattr('id', 'equalto', settlement.payer_id)|first %}
                                 {% set receiver = all_users|selectattr('id', 'equalto', settlement.receiver_id)|first %}
-                                <li style="display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #eee; font-size: 0.98em;">
-                                    <span><i class="fas fa-user"></i> {{ payer.username if payer else '' }} paid <i class="fas fa-user"></i> {{ receiver.username if receiver else '' }}</span>
-                                    <span style="font-weight: bold; color: #1ca01c;"><i class="fas fa-rupee-sign"></i> {{ settlement.amount }}</span>
+                                <li class="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0 text-sm">
+                                    <span class="text-gray-700"><i class="fas fa-user mr-1 text-gray-500"></i> {{ payer.username if payer else 'Unknown' }} paid <i class="fas fa-user mr-1 text-gray-500"></i> {{ receiver.username if receiver else 'Unknown' }}</span>
+                                    <span class="font-bold text-green-600">₹{{ settlement.amount }}</span>
                                 </li>
-                            {% else %}
-                                <li style="color: #aaa; font-size: 0.98em;">No settlements yet.</li>
-                            {% endfor %}
+                                {% else %}
+                                <li class="text-gray-400 text-sm py-2">No settlements yet.</li>
+                                {% endfor %}
                             </ul>
                         </div>
-                        {% set latest_expense = group.expenses[0] if group.expenses else None %}
-                        {% set receiver = group.members|selectattr('id', 'equalto', latest_expense.paid_by)|first if latest_expense else None %}
-                        <div class="group-actions" style="display: flex; flex-direction: column; gap: 8px; margin-top: 16px;">
-                            {% for member in group.members %}
-                                {% set bal = balances[member.username] %}
-                                {% if bal < 0 and member.username == username and receiver and receiver.upi_id %}
-                                    <form method="post" action="/dashboard/settle-up">
-                                        <input type="hidden" name="group_id" value="{{ group.id }}">
-                                        <input type="hidden" name="receiver_id" value="{{ receiver.id }}">
-                                        <input type="hidden" name="amount" value="{{ -bal|round(2) }}">
-                                        <button type="submit" class="settle-btn"><i class="fas fa-handshake"></i> Settle Up</button>
-                                    </form>
-                                {% endif %}
-                            {% endfor %}
+                        <div class="group-actions flex flex-col gap-3">
+                            <!-- Settlement Actions -->
                             {% for owe in group.owes %}
-                                {% if owe.debtor.username == username and owe.creditor.upi_id %}
-                                    <div style="margin-bottom: 8px;">
-                                        <a href="upi://pay?pa={{ owe.creditor.upi_id }}&pn={{ owe.creditor.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
-                                           target="_blank" style="color: #128c7e; font-weight: bold; text-decoration: underline;">
-                                            Pay {{ owe.creditor.username }} ₹{{ owe.amount }} via UPI
-                                        </a>
-                                        <div style="font-size: 0.95em; color: #888; margin-top: 2px;">
-                                            (UPI links work only on mobile. Or scan QR below:)
+                                {% if owe.debtor.username == username %}
+                                    {% set creditor_user = all_users|selectattr('username', 'equalto', owe.creditor.username)|first %}
+                                    {% if creditor_user and creditor_user.upi_id %}
+                                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-center">
+                                            <a href="upi://pay?pa={{ creditor_user.upi_id }}&pn={{ creditor_user.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
+                                               target="_blank" class="text-blue-700 font-bold hover:underline text-sm block mb-2">
+                                                Pay {{ creditor_user.username }} ₹{{ owe.amount }} via UPI
+                                            </a>
+                                            <div class="text-xs text-gray-500 mb-2">
+                                                (UPI links work only on mobile. Or scan QR below:)
+                                            </div>
+                                            <img src="https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=upi://pay?pa={{ creditor_user.upi_id }}&pn={{ creditor_user.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
+                                                 alt="UPI QR Code" class="mx-auto mt-2 rounded-lg shadow-sm w-32 h-32">
                                         </div>
-                                        <img src="https://chart.googleapis.com/chart?cht=qr&chs=160x160&chl=upi://pay?pa={{ owe.creditor.upi_id }}&pn={{ owe.creditor.username }}&am={{ owe.amount }}&tn=SplitEase+Payment"
-                                             alt="UPI QR Code" style="margin-top: 4px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
-                                    </div>
+                                    {% else %}
+                                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100 text-center">
+                                            <p class="text-yellow-700 text-sm">You owe {{ owe.creditor.username }} ₹{{ owe.amount }}</p>
+                                            <p class="text-yellow-600 text-xs mt-1">Ask them to add their UPI ID</p>
+                                        </div>
+                                    {% endif %}
                                 {% endif %}
                             {% endfor %}
-                            <button onclick="toggleExpenseForm('expense-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-plus-circle"></i> Add Expense</button>
-                            <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" style="display:none; margin-top:8px;" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                            
+                            <!-- Add Expense Button -->
+                            <button onclick="toggleForm('expense-form-{{ group.id }}')" class="group-action-btn w-full bg-purple-500 text-white py-2 rounded-lg font-semibold hover:bg-purple-600 transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-plus-circle"></i> <span>Add Expense</span>
+                            </button>
+                            <form id="expense-form-{{ group.id }}" method="post" action="/dashboard/add-expense" class="hidden flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                                 <input type="hidden" name="group_id" value="{{ group.id }}">
-                                <input type="text" name="description" placeholder="Reason" required style="margin-bottom:6px;">
-                                <input type="number" name="amount" placeholder="Amount" step="0.01" min="0" required style="margin-bottom:6px;">
-                                <button type="submit"><i class="fas fa-check"></i> Add</button>
+                                <input type="text" name="description" placeholder="Reason" required
+                                       class="px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-sm">
+                                <input type="number" name="amount" placeholder="Amount" step="0.01" min="0" required
+                                       class="px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-purple-300 focus:border-purple-500 text-sm">
+                                <button type="submit" class="bg-purple-600 text-white py-2 rounded-md font-semibold hover:bg-purple-700 transition-colors duration-200 text-sm flex items-center justify-center space-x-2">
+                                    <i class="fas fa-check"></i> <span>Add</span>
+                                </button>
                             </form>
-                            <button onclick="toggleInviteForm('invite-form-{{ group.id }}')" class="group-action-btn"><i class="fas fa-user-plus"></i> Invite Friend</button>
-                            <form id="invite-form-{{ group.id }}" method="post" action="/dashboard/invite-user" style="display:none; margin-top:8px;" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
+                            
+                            <!-- Invite Friend Button -->
+                            <button onclick="toggleForm('invite-form-{{ group.id }}')" class="group-action-btn w-full bg-indigo-500 text-white py-2 rounded-lg font-semibold hover:bg-indigo-600 transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-user-plus"></i> <span>Invite Friend</span>
+                            </button>
+                            <form id="invite-form-{{ group.id }}" method="post" action="/dashboard/invite-user" class="hidden flex flex-col gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200" onsubmit="this.querySelector('button[type=submit]').disabled=true;">
                                 <input type="hidden" name="group_id" value="{{ group.id }}">
-                                <input type="text" name="username" placeholder="Friend's username" required style="margin-bottom:6px;">
-                                <button type="submit"><i class="fas fa-paper-plane"></i> Invite</button>
+                                <input type="text" name="username" placeholder="Friend's username" required
+                                       class="px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-indigo-300 focus:border-indigo-500 text-sm">
+                                <button type="submit" class="bg-indigo-600 text-white py-2 rounded-md font-semibold hover:bg-indigo-700 transition-colors duration-200 text-sm flex items-center justify-center space-x-2">
+                                    <i class="fas fa-paper-plane"></i> <span>Invite</span>
+                                </button>
                             </form>
-                            <button onclick="toggleDeleteForm('delete-form-{{ group.id }}')" class="group-action-btn delete-btn"><i class="fas fa-trash"></i> Delete Group</button>
-                            <form id="delete-form-{{ group.id }}" method="post" action="/dashboard/delete-group" style="display:none; margin-top:8px;" onsubmit="return confirm('Are you sure you want to delete this group?');">
+                            
+                            <!-- Delete Group Button -->
+                            <button onclick="showDeleteConfirm('delete-form-{{ group.id }}')" class="group-action-btn w-full bg-red-500 text-white py-2 rounded-lg font-semibold hover:bg-red-600 transition-colors duration-200 flex items-center justify-center space-x-2">
+                                <i class="fas fa-trash"></i> <span>Delete Group</span>
+                            </button>
+                            <!-- The delete form will be submitted via the modal's confirm button -->
+                            <form id="delete-form-{{ group.id }}" method="post" action="/dashboard/delete-group" class="hidden">
                                 <input type="hidden" name="group_id" value="{{ group.id }}">
-                                <button type="submit" class="delete-btn"><i class="fas fa-trash"></i> Confirm Delete</button>
                             </form>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
-                <form method="post" action="/dashboard/add-group" class="add-group-form" style="margin-top: 10px;">
-                    <input type="text" name="group_name" placeholder="New group name" required>
-                    <button type="submit"><i class="fas fa-plus"></i> Add Group</button>
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-users text-gray-300 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Groups Yet</h3>
+                    <p class="text-gray-500 mb-6">Create your first group to start splitting expenses with friends!</p>
+                </div>
+                {% endif %}
+                
+                <!-- Add Group Form -->
+                <form method="post" action="/dashboard/add-group" class="add-group-form flex flex-col sm:flex-row gap-3 mt-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
+                    <input type="text" name="group_name" placeholder="New group name" required
+                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-300 focus:border-purple-500 transition-all duration-200 w-full sm:w-auto">
+                    <button type="submit" class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-200 w-full sm:w-auto flex items-center justify-center space-x-2">
+                        <i class="fas fa-plus"></i> <span>Add Group</span>
+                    </button>
                 </form>
             </div>
+
+            <!-- Recent Expenses Section -->
             <div class="expenses">
-                <h2 style="text-align:center;">Recent Expenses</h2>
-                <div class="expenses-list" style="display: flex; flex-direction: column; align-items: center; gap: 18px;">
-                {% for expense in expenses %}
-                    <div class="expense-card" title="Expense by {{ expense.payer.username }}" aria-label="Expense Card">
-                        <div class="expense-header">
-                            <span class="expense-payer"><i class="fas fa-user"></i> {{ expense.payer.username }}</span>
-                            <span class="expense-amount">₹{{ expense.amount }}</span>
+                <h2 class="text-2xl font-bold text-gray-900 mb-5 text-center">Recent Expenses</h2>
+                {% if expenses %}
+                <div class="expenses-list flex flex-col items-center gap-4">
+                    {% for expense in expenses %}
+                    <div class="expense-card bg-white p-5 rounded-xl shadow-md border border-gray-100 w-full max-w-xl transform hover:scale-[1.01] transition-transform duration-200"
+                         title="Expense by {{ expense.payer.username }}" aria-label="Expense Card">
+                        <div class="expense-header flex justify-between items-center mb-3 pb-3 border-b border-gray-100">
+                            <span class="expense-payer text-lg font-semibold text-gray-800 flex items-center space-x-2">
+                                <i class="fas fa-user text-purple-500"></i> <span>{{ expense.payer.username }}</span>
+                            </span>
+                            <span class="expense-amount text-2xl font-bold text-purple-600">₹{{ expense.amount }}</span>
                         </div>
-                        <div class="expense-body">
-                            <span class="expense-group"><i class="fas fa-users"></i> {{ expense.group.name }}</span>
-                            <span class="expense-reason"><i class="fas fa-comment-dots"></i> {{ expense.description }}</span>
+                        <div class="expense-body text-sm text-gray-600 flex flex-col space-y-1">
+                            <span class="expense-group flex items-center space-x-2">
+                                <i class="fas fa-users text-gray-500"></i> <span>{{ expense.group.name }}</span>
+                            </span>
+                            <span class="expense-reason flex items-center space-x-2">
+                                <i class="fas fa-comment-dots text-gray-500"></i> <span>{{ expense.description }}</span>
+                            </span>
                         </div>
                     </div>
-                {% endfor %}
+                    {% endfor %}
                 </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-receipt text-gray-300 text-6xl mb-4"></i>
+                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Recent Expenses</h3>
+                    <p class="text-gray-500">Add some expenses to your groups to see them here!</p>
+                </div>
+                {% endif %}
             </div>
-            <script>
-            function toggleExpenseForm(id) {
-                var el = document.getElementById(id);
-                if (el.style.display === 'none' || el.style.display === '') {
-                    el.style.display = 'block';
-                } else {
-                    el.style.display = 'none';
-                }
+        </main>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl max-w-sm w-full text-center">
+            <h3 class="text-xl font-bold text-gray-800 mb-4">Confirm Action</h3>
+            <p class="text-gray-600 mb-6" id="modalMessage">Are you sure you want to proceed?</p>
+            <div class="flex justify-center space-x-4">
+                <button id="cancelButton" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg font-semibold hover:bg-gray-400 transition-colors duration-200">
+                    Cancel
+                </button>
+                <button id="confirmButton" class="px-6 py-2 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 transition-colors duration-200">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to toggle form visibility
+        function toggleForm(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.toggle('hidden');
             }
-            function toggleInviteForm(id) {
-                var el = document.getElementById(id);
-                if (el.style.display === 'none' || el.style.display === '') {
-                    el.style.display = 'block';
-                } else {
-                    el.style.display = 'none';
+        }
+
+        // Custom confirmation modal logic
+        let currentFormToSubmit = null;
+
+        function showDeleteConfirm(formId) {
+            const modal = document.getElementById('confirmationModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const confirmButton = document.getElementById('confirmButton');
+            const cancelButton = document.getElementById('cancelButton');
+
+            modalMessage.textContent = 'Are you sure you want to delete this group? This action cannot be undone.';
+            currentFormToSubmit = document.getElementById(formId);
+
+            modal.classList.remove('hidden');
+
+            confirmButton.onclick = () => {
+                if (currentFormToSubmit) {
+                    currentFormToSubmit.submit();
                 }
-            }
-            function toggleDeleteForm(id) {
-                var el = document.getElementById(id);
-                if (el.style.display === 'none' || el.style.display === '') {
-                    el.style.display = 'block';
-                } else {
-                    el.style.display = 'none';
+                modal.classList.add('hidden');
+            };
+
+            cancelButton.onclick = () => {
+                modal.classList.add('hidden');
+                currentFormToSubmit = null;
+            };
+
+            // Close modal if clicking outside
+            modal.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.classList.add('hidden');
+                    currentFormToSubmit = null;
                 }
-            }
-            </script>
-            <!-- Notification Bell Script -->
-            <script>
-            function toggleDropdown() {
-                var dropdown = document.getElementById('notification-dropdown');
-                if (dropdown.style.display === 'block') {
-                    dropdown.style.display = 'none';
-                } else {
-                    dropdown.style.display = 'block';
-                }
-            }
-            window.onclick = function(event) {
-                if (!event.target.closest('.notification-bell')) {
-                    var dropdown = document.getElementById('notification-dropdown');
-                    if (dropdown) dropdown.style.display = 'none';
-                }
-            }
-            </script>
-            <!-- End Notification Bell Script -->
+            };
+        }
+    </script>
 </body>
 </html>
