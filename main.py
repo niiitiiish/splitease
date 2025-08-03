@@ -460,8 +460,8 @@ async def update_upi(request: Request, db: Session = Depends(get_db)):
             db.commit()
     except Exception as e:
         db.rollback()
-    
-    return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND)
+    msg="upi updated"
+    return RedirectResponse(url="/dashboard", status_code=status.HTTP_302_FOUND,msg=msg)
 
 # =============================================================================
 # ERROR HANDLING
