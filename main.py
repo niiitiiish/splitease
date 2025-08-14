@@ -15,7 +15,13 @@ import os
 # =============================================================================
 # DATABASE SETUP
 # =============================================================================
-Base.metadata.create_all(bind=engine)
+def setup_database():
+    """Setup database tables"""
+    try:
+        Base.metadata.create_all(bind=engine)
+        print("✅ Database tables created successfully!")
+    except Exception as e:
+        print(f"⚠️  Database setup warning: {e}")
 
 # =============================================================================
 # FASTAPI APP CONFIGURATION
@@ -24,6 +30,11 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="your-secret-key")
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Setup database on startup
+@app.on_event("startup")
+async def startup_event():
+    setup_database()
 
 # =============================================================================
 # DATABASE UTILITY FUNCTIONS
